@@ -18,36 +18,48 @@ const STATE = {
 ===================================================================== */
 const LS_KEY = "freecad-lp-v1";
 
+/* Single serialization helper — used by both saveState() and exportProgress().
+   Adding a new STATE field: update here and nowhere else. */
+function serializeState() {
+  const checkedReqs = {};
+  for (const [k, v] of Object.entries(STATE.checkedRequirements)) {
+    checkedReqs[k] = [...v];
+  }
+  return {
+    theme: STATE.theme,
+    completedLessons: [...STATE.completedLessons],
+    openedLessons: [...STATE.openedLessons],
+    completedChallenges: [...STATE.completedChallenges],
+    checkedRequirements: checkedReqs
+  };
+}
+
+/* Single hydration helper — used by both loadState() and importProgress().
+   Applies field-by-field guards; string-type filter applied to all arrays. */
+function hydrateState(data) {
+  if (data.theme === "dark" || data.theme === "light") STATE.theme = data.theme;
+  if (Array.isArray(data.completedLessons))   STATE.completedLessons   = new Set(data.completedLessons.filter(x => typeof x === "string"));
+  if (Array.isArray(data.openedLessons))       STATE.openedLessons      = new Set(data.openedLessons.filter(x => typeof x === "string"));
+  if (Array.isArray(data.completedChallenges)) STATE.completedChallenges = new Set(data.completedChallenges.filter(x => typeof x === "string"));
+  if (data.checkedRequirements && typeof data.checkedRequirements === "object" && !Array.isArray(data.checkedRequirements)) {
+    STATE.checkedRequirements = {};
+    for (const [k, v] of Object.entries(data.checkedRequirements)) {
+      STATE.checkedRequirements[k] = new Set(Array.isArray(v) ? v : []);
+    }
+  }
+}
+
 function loadState() {
   try {
     const raw = localStorage.getItem(LS_KEY);
     if (!raw) return;
-    const data = JSON.parse(raw);
-    if (data.theme) STATE.theme = data.theme;
-    if (Array.isArray(data.completedLessons)) STATE.completedLessons = new Set(data.completedLessons);
-    if (Array.isArray(data.openedLessons)) STATE.openedLessons = new Set(data.openedLessons);
-    if (Array.isArray(data.completedChallenges)) STATE.completedChallenges = new Set(data.completedChallenges);
-    if (data.checkedRequirements && typeof data.checkedRequirements === "object") {
-      for (const [k, v] of Object.entries(data.checkedRequirements)) {
-        STATE.checkedRequirements[k] = new Set(Array.isArray(v) ? v : []);
-      }
-    }
+    hydrateState(JSON.parse(raw));
   } catch (e) { /* localStorage unavailable or corrupted — continue with defaults */ }
 }
 
 function saveState() {
   try {
-    const checkedReqs = {};
-    for (const [k, v] of Object.entries(STATE.checkedRequirements)) {
-      checkedReqs[k] = [...v];
-    }
-    localStorage.setItem(LS_KEY, JSON.stringify({
-      theme: STATE.theme,
-      completedLessons: [...STATE.completedLessons],
-      openedLessons: [...STATE.openedLessons],
-      completedChallenges: [...STATE.completedChallenges],
-      checkedRequirements: checkedReqs
-    }));
+    localStorage.setItem(LS_KEY, JSON.stringify(serializeState()));
   } catch (e) { /* ignore */ }
 }
 
@@ -411,56 +423,60 @@ function filterByLevel(levelId) {
    EXPORT / IMPORT
 ===================================================================== */
 function exportProgress() {
-  const checkedReqs = {};
-  for (const [k, v] of Object.entries(STATE.checkedRequirements)) {
-    checkedReqs[k] = [...v];
-  }
-  const payload = JSON.stringify({
-    version: 1,
-    exportedAt: new Date().toISOString(),
-    theme: STATE.theme,
-    completedLessons: [...STATE.completedLessons],
-    openedLessons: [...STATE.openedLessons],
-    completedChallenges: [...STATE.completedChallenges],
-    checkedRequirements: checkedReqs
-  }, null, 2);
-
-  const date = new Date().toISOString().slice(0, 10);
+  const now = new Date().toISOString();
+  const payload = JSON.stringify({ version: 1, exportedAt: now, ...serializeState() }, null, 2);
+  const objectUrl = URL.createObjectURL(new Blob([payload], { type: "application/json" }));
   const a = document.createElement("a");
-  a.href = URL.createObjectURL(new Blob([payload], { type: "application/json" }));
-  a.download = `freecad-progress-${date}.json`;
+  a.href = objectUrl;
+  a.download = `freecad-progress-${now.slice(0, 10)}.json`;
   a.click();
-  URL.revokeObjectURL(a.href);
+  // Defer revocation so the browser can initiate the download asynchronously
+  setTimeout(() => URL.revokeObjectURL(objectUrl), 100);
   showToast("Progress exported.");
 }
 
 function importProgress(file) {
   const reader = new FileReader();
-  reader.onload = (e) => {
+
+  reader.onerror = () => showToast("Import failed: could not read file.");
+
+  reader.onload = (ev) => {
+    // Parse and validate — errors here mean the file is unusable
+    let data;
     try {
-      const data = JSON.parse(e.target.result);
+      data = JSON.parse(ev.target.result);
       if (!data || typeof data !== "object" || Array.isArray(data)) throw new Error();
-
-      if (data.theme === "dark" || data.theme === "light") STATE.theme = data.theme;
-      if (Array.isArray(data.completedLessons))   STATE.completedLessons   = new Set(data.completedLessons.filter(x => typeof x === "string"));
-      if (Array.isArray(data.openedLessons))       STATE.openedLessons      = new Set(data.openedLessons.filter(x => typeof x === "string"));
-      if (Array.isArray(data.completedChallenges)) STATE.completedChallenges = new Set(data.completedChallenges.filter(x => typeof x === "string"));
-      if (data.checkedRequirements && typeof data.checkedRequirements === "object" && !Array.isArray(data.checkedRequirements)) {
-        STATE.checkedRequirements = {};
-        for (const [k, v] of Object.entries(data.checkedRequirements)) {
-          STATE.checkedRequirements[k] = new Set(Array.isArray(v) ? v : []);
-        }
-      }
-
-      applyTheme(STATE.theme);
-      saveState();
-      renderAll();
-      showToast("Progress imported.");
-    } catch (err) {
+    } catch (_) {
       showToast("Import failed: invalid file.");
+      return;
     }
+
+    // Confirm before overwriting existing progress
+    const { totalLessons, totalChallenges } = getTotals();
+    const cl = STATE.completedLessons.size;
+    const cc = STATE.completedChallenges.size;
+    const hasProgress = cl > 0 || cc > 0;
+    if (hasProgress) {
+      const msg = `This will replace your current progress (${cl}/${totalLessons} lessons, ${cc}/${totalChallenges} challenges). Continue?`;
+      if (!confirm(msg)) return;
+    }
+
+    // Close any open modal before re-rendering
+    if (!document.getElementById("modalOverlay").hasAttribute("hidden")) closeModal();
+
+    // Mutate STATE and update UI — these are separate from parse/validate
+    hydrateState(data);
+    applyTheme(STATE.theme);
+    saveState();
+    renderAll();
+    showToast("Progress imported.");
   };
-  reader.readAsText(file);
+
+  try {
+    reader.readAsText(file);
+  } catch (_) {
+    showToast("Import failed: could not read file.");
+  }
 }
 
 /* =====================================================================
@@ -512,6 +528,13 @@ function attachStaticListeners() {
     if (file) {
       importProgress(file);
       e.target.value = ""; // reset so the same file can be re-imported
+    }
+  });
+  // Keyboard activation for the import label (Enter or Space)
+  document.getElementById("importLabel").addEventListener("keydown", (e) => {
+    if (e.key === "Enter" || e.key === " ") {
+      e.preventDefault();
+      document.getElementById("importFile").click();
     }
   });
 
