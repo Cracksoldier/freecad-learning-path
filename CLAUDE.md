@@ -24,13 +24,18 @@ freecad-learning-path/
 
 ## Getting fonts
 
-Font files are not committed to the repo. Run once after cloning:
+Font files are committed to the repo (`assets/fonts/*.woff2`) so the app works offline immediately after cloning. To refresh them (e.g. after a version bump), run:
 
 ```
 ! .\download-fonts.ps1
 ```
 
-This downloads Inter (400/500/600/700) and JetBrains Mono (400/500) as latin-subset woff2 files into `assets/fonts/`. Until fonts are downloaded the page still works, falling back to system-ui and Courier New.
+The script defaults to the local proxy `http://localhost:3129`. Pass a different proxy or omit it if a direct connection works:
+
+```
+! .\download-fonts.ps1 -Proxy ""
+! .\download-fonts.ps1 -Proxy http://other-proxy:8080
+```
 
 ## Development workflow
 
