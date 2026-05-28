@@ -6,10 +6,13 @@
 const STATE = {
   theme: "dark",
   activeLevel: "all",
+  searchQuery: "",          // ephemeral — not persisted
   completedLessons: new Set(),
   openedLessons: new Set(),
   completedChallenges: new Set(),
   checkedRequirements: {},   // { challengeId: Set<reqIndex> }
+  lessonNotes: {},           // { lessonId: string }
+  bookmarkedLessonId: null,
   modalLessonId: null
 };
 
@@ -25,12 +28,18 @@ function serializeState() {
   for (const [k, v] of Object.entries(STATE.checkedRequirements)) {
     checkedReqs[k] = [...v];
   }
+  const lessonNotes = {};
+  for (const [k, v] of Object.entries(STATE.lessonNotes)) {
+    if (typeof k === "string" && typeof v === "string") lessonNotes[k] = v;
+  }
   return {
     theme: STATE.theme,
     completedLessons: [...STATE.completedLessons],
     openedLessons: [...STATE.openedLessons],
     completedChallenges: [...STATE.completedChallenges],
-    checkedRequirements: checkedReqs
+    checkedRequirements: checkedReqs,
+    lessonNotes,
+    bookmarkedLessonId: typeof STATE.bookmarkedLessonId === "string" ? STATE.bookmarkedLessonId : null
   };
 }
 
@@ -46,6 +55,15 @@ function hydrateState(data) {
     for (const [k, v] of Object.entries(data.checkedRequirements)) {
       STATE.checkedRequirements[k] = new Set(Array.isArray(v) ? v : []);
     }
+  }
+  if (data.lessonNotes && typeof data.lessonNotes === "object" && !Array.isArray(data.lessonNotes)) {
+    STATE.lessonNotes = {};
+    for (const [k, v] of Object.entries(data.lessonNotes)) {
+      if (typeof k === "string" && typeof v === "string") STATE.lessonNotes[k] = v;
+    }
+  }
+  if (typeof data.bookmarkedLessonId === "string" || data.bookmarkedLessonId === null) {
+    STATE.bookmarkedLessonId = data.bookmarkedLessonId;
   }
 }
 
@@ -161,17 +179,25 @@ function buildLessonCard(lesson) {
   const status = getStatus(lesson.id, "lesson");
   const resCount = lesson.resources.length;
   const exCount = lesson.exercises.length;
+  const hasNote = !!STATE.lessonNotes[lesson.id];
+  const q = STATE.searchQuery;
+  const highlight = q ? escHtml(lesson.title).replace(
+    new RegExp(escHtml(q).replace(/[.*+?^${}()|[\]\\]/g, "\\$&"), "gi"),
+    m => `<mark>${m}</mark>`
+  ) : escHtml(lesson.title);
   return `
     <div class="lesson-card" data-lesson-id="${lesson.id}" data-status="${status}" role="button" tabindex="0" aria-label="Open lesson: ${escHtml(lesson.title)}">
       <div class="card-top">
         <span class="card-num">Lesson ${lesson.num}</span>
         ${statusIcon(status)}
       </div>
-      <div class="card-title">${escHtml(lesson.title)}</div>
+      <div class="card-title">${highlight}</div>
       <div class="card-desc">${escHtml(lesson.description)}</div>
       <div class="card-meta">
+        ${lesson.duration ? `<span class="card-badge">⏱ ${escHtml(lesson.duration)}</span>` : ""}
         <span class="card-badge">📚 ${resCount} resource${resCount !== 1 ? "s" : ""}</span>
         <span class="card-badge">✏ ${exCount} exercise${exCount !== 1 ? "s" : ""}</span>
+        ${hasNote ? `<span class="card-badge">📝 Note</span>` : ""}
       </div>
     </div>
   `.trim();
@@ -238,12 +264,18 @@ function renderLearningPath() {
   const container = document.getElementById("learningPath");
   const active = STATE.activeLevel;
 
-  const levelsToShow = active === "all"
-    ? DATA.levels
-    : DATA.levels.filter(l => l.id === active);
+  const q = STATE.searchQuery;
+  const levelsToShow = (active === "all" ? DATA.levels : DATA.levels.filter(l => l.id === active))
+    .map(level => ({
+      ...level,
+      lessons: q ? level.lessons.filter(l =>
+        (l.title + " " + l.description).toLowerCase().includes(q)
+      ) : level.lessons
+    }))
+    .filter(level => level.lessons.length > 0);
 
   if (levelsToShow.length === 0) {
-    container.innerHTML = `<div class="empty-state">No lessons found for this level.</div>`;
+    container.innerHTML = `<div class="empty-state">${q ? "No lessons match your search." : "No lessons found for this level."}</div>`;
     return;
   }
 
@@ -270,6 +302,7 @@ function renderLearningPath() {
 function renderAll() {
   renderLearningPath();
   renderProgressBars();
+  renderResumeBanner();
 }
 
 /* =====================================================================
@@ -295,7 +328,9 @@ function openModal(lessonId) {
   pill.textContent = level ? level.title : lesson.levelId;
   pill.className = `modal-level-pill level-pill--${lesson.levelId}`;
 
-  document.getElementById("modalLessonNum").textContent = `Lesson ${lesson.num} of ${getAllLessons().length}`;
+  const totalLessons = getAllLessons().length;
+  const durText = lesson.duration ? ` · ${lesson.duration}` : "";
+  document.getElementById("modalLessonNum").textContent = `Lesson ${lesson.num} of ${totalLessons}${durText}`;
   document.getElementById("modalTitle").textContent = lesson.title;
   document.getElementById("modalDescription").textContent = lesson.description;
 
@@ -311,6 +346,12 @@ function openModal(lessonId) {
 
   // Complete button
   syncCompleteButton(lessonId);
+
+  // Bookmark button
+  syncBookmarkButton(lessonId);
+
+  // Notes
+  document.getElementById("modalNotes").value = STATE.lessonNotes[lessonId] || "";
 
   // Nav buttons
   document.getElementById("modalPrevBtn").disabled = !prev;
@@ -329,6 +370,7 @@ function openModal(lessonId) {
 }
 
 function closeModal() {
+  flushNoteDebounce();
   const overlay = document.getElementById("modalOverlay");
   overlay.setAttribute("hidden", "");
   document.body.classList.remove("modal-open");
@@ -417,6 +459,97 @@ function filterByLevel(levelId) {
   });
   if (!document.getElementById("modalOverlay").hasAttribute("hidden")) closeModal();
   renderLearningPath();
+}
+
+/* =====================================================================
+   NOTES
+===================================================================== */
+let noteDebounceTimer = null;
+function flushNoteDebounce() {
+  if (noteDebounceTimer) { clearTimeout(noteDebounceTimer); noteDebounceTimer = null; }
+}
+function onNoteInput(lessonId, value) {
+  flushNoteDebounce();
+  noteDebounceTimer = setTimeout(() => {
+    if (value.trim()) {
+      STATE.lessonNotes[lessonId] = value;
+    } else {
+      delete STATE.lessonNotes[lessonId];
+    }
+    saveState();
+    updateCardStatus(lessonId);
+  }, 500);
+}
+
+/* =====================================================================
+   BOOKMARK
+===================================================================== */
+function setBookmark(lessonId) {
+  STATE.bookmarkedLessonId = STATE.bookmarkedLessonId === lessonId ? null : lessonId;
+  saveState();
+  renderResumeBanner();
+  syncBookmarkButton(lessonId);
+}
+
+function syncBookmarkButton(lessonId) {
+  const btn = document.getElementById("modalBookmarkBtn");
+  if (!btn) return;
+  const isBookmarked = STATE.bookmarkedLessonId === lessonId;
+  btn.textContent = isBookmarked ? "📌" : "📍";
+  btn.setAttribute("aria-label", isBookmarked ? "Remove bookmark" : "Bookmark this lesson");
+  btn.classList.toggle("bookmarked", isBookmarked);
+}
+
+function renderResumeBanner() {
+  const banner = document.getElementById("resumeBanner");
+  if (!banner) return;
+  const lessonId = STATE.bookmarkedLessonId;
+  const lesson = lessonId ? findLesson(lessonId) : null;
+  if (!lesson) {
+    banner.hidden = true;
+    banner.innerHTML = "";
+    return;
+  }
+  banner.hidden = false;
+  banner.innerHTML = `
+    <div class="resume-banner-inner" role="button" tabindex="0" aria-label="Resume lesson: ${escHtml(lesson.title)}">
+      <span>📌 Resume:</span>
+      <span class="resume-lesson-title">Lesson ${lesson.num} — ${escHtml(lesson.title)}</span>
+      <span class="resume-arrow">→</span>
+    </div>
+  `.trim();
+  banner.querySelector(".resume-banner-inner").addEventListener("click", () => openModal(lessonId));
+  banner.querySelector(".resume-banner-inner").addEventListener("keydown", (e) => {
+    if (e.key === "Enter" || e.key === " ") { e.preventDefault(); openModal(lessonId); }
+  });
+}
+
+/* =====================================================================
+   SEARCH
+===================================================================== */
+let searchDebounceTimer = null;
+function filterBySearch(query) {
+  flushSearchDebounce();
+  STATE.searchQuery = query.trim().toLowerCase();
+  renderLearningPath();
+  const clearBtn = document.getElementById("searchClear");
+  if (clearBtn) clearBtn.hidden = !query;
+}
+function flushSearchDebounce() {
+  if (searchDebounceTimer) { clearTimeout(searchDebounceTimer); searchDebounceTimer = null; }
+}
+
+/* =====================================================================
+   SHORTCUTS OVERLAY
+===================================================================== */
+function openShortcuts() {
+  document.getElementById("shortcutsOverlay").removeAttribute("hidden");
+  document.body.classList.add("modal-open");
+  document.getElementById("shortcutsClose").focus();
+}
+function closeShortcuts() {
+  document.getElementById("shortcutsOverlay").setAttribute("hidden", "");
+  document.body.classList.remove("modal-open");
 }
 
 /* =====================================================================
@@ -521,6 +654,35 @@ function attachStaticListeners() {
     saveState();
   });
 
+  // Keyboard shortcuts button
+  document.getElementById("shortcutsBtn").addEventListener("click", openShortcuts);
+  document.getElementById("shortcutsClose").addEventListener("click", closeShortcuts);
+  document.getElementById("shortcutsOverlay").addEventListener("click", (e) => {
+    if (e.target === document.getElementById("shortcutsOverlay")) closeShortcuts();
+  });
+
+  // Bookmark button
+  document.getElementById("modalBookmarkBtn").addEventListener("click", () => {
+    if (STATE.modalLessonId) setBookmark(STATE.modalLessonId);
+  });
+
+  // Notes textarea
+  document.getElementById("modalNotes").addEventListener("input", (e) => {
+    if (STATE.modalLessonId) onNoteInput(STATE.modalLessonId, e.target.value);
+  });
+
+  // Search input
+  const searchInput = document.getElementById("searchInput");
+  searchInput.addEventListener("input", (e) => {
+    flushSearchDebounce();
+    searchDebounceTimer = setTimeout(() => filterBySearch(e.target.value), 200);
+  });
+  document.getElementById("searchClear").addEventListener("click", () => {
+    searchInput.value = "";
+    filterBySearch("");
+    searchInput.focus();
+  });
+
   // Export / import progress
   document.getElementById("exportProgress").addEventListener("click", exportProgress);
   document.getElementById("importFile").addEventListener("change", (e) => {
@@ -577,8 +739,21 @@ function attachStaticListeners() {
     const overlay = document.getElementById("modalOverlay");
     const modalOpen = !overlay.hasAttribute("hidden");
 
+    // Escape closes shortcuts overlay too
+    const shortcutsOpen = !document.getElementById("shortcutsOverlay").hasAttribute("hidden");
+    if (e.key === "Escape" && shortcutsOpen) {
+      closeShortcuts();
+      return;
+    }
+
     if (e.key === "Escape" && modalOpen) {
       closeModal();
+      return;
+    }
+
+    // ? key opens cheat sheet when no modal is open
+    if (e.key === "?" && !modalOpen && !shortcutsOpen) {
+      openShortcuts();
       return;
     }
     if (modalOpen && e.key === "ArrowLeft" && STATE.modalLessonId) {

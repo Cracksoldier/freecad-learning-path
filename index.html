@@ -31,6 +31,7 @@
           <input type="file" id="importFile" accept=".json" style="display:none">
         </label>
         <button id="resetProgress" class="btn-icon" aria-label="Reset all progress">Reset</button>
+        <button id="shortcutsBtn" class="btn-icon" aria-label="Keyboard shortcuts">?</button>
       </div>
     </div>
   </header>
@@ -56,6 +57,15 @@
       </div>
     </div>
   </section>
+
+  <!-- RESUME BANNER -->
+  <div id="resumeBanner" hidden></div>
+
+  <!-- SEARCH BAR -->
+  <div class="search-bar">
+    <input type="search" id="searchInput" class="search-input" placeholder="Search lessons…" aria-label="Search lessons">
+    <button id="searchClear" class="search-clear" aria-label="Clear search" hidden>✕</button>
+  </div>
 
   <!-- LEVEL FILTER NAV -->
   <nav class="level-nav" aria-label="Filter lessons by level">
@@ -93,11 +103,35 @@
         <h3>Exercises</h3>
         <ol id="modalExercises"></ol>
       </div>
+      <div class="modal-section">
+        <h3>My Notes</h3>
+        <textarea id="modalNotes" class="modal-notes" placeholder="Add your notes for this lesson…" rows="4"></textarea>
+      </div>
       <div class="modal-footer">
+        <button class="btn-bookmark" id="modalBookmarkBtn" aria-label="Bookmark this lesson">📍</button>
         <button class="btn-complete" id="modalCompleteBtn">Mark as Complete</button>
         <button class="btn-nav" id="modalPrevBtn" aria-label="Previous lesson">← Previous</button>
         <button class="btn-nav" id="modalNextBtn" aria-label="Next lesson">Next →</button>
       </div>
+    </div>
+  </div>
+
+  <!-- KEYBOARD SHORTCUTS OVERLAY -->
+  <div class="modal-overlay" id="shortcutsOverlay" role="dialog" aria-modal="true" aria-label="Keyboard shortcuts" hidden>
+    <div class="shortcuts-modal">
+      <div class="shortcuts-header">
+        <h2>Keyboard Shortcuts</h2>
+        <button id="shortcutsClose" class="modal-close" aria-label="Close shortcuts">✕</button>
+      </div>
+      <table class="shortcuts-table">
+        <tbody>
+          <tr><td><kbd>?</kbd></td><td>Show / hide this cheat sheet</td></tr>
+          <tr><td><kbd>Esc</kbd></td><td>Close lesson modal or this overlay</td></tr>
+          <tr><td><kbd>←</kbd> <kbd>→</kbd></td><td>Navigate between lessons (modal open)</td></tr>
+          <tr><td><kbd>Tab</kbd> / <kbd>Shift+Tab</kbd></td><td>Move focus within modal</td></tr>
+          <tr><td><kbd>Enter</kbd> / <kbd>Space</kbd></td><td>Open focused lesson card</td></tr>
+        </tbody>
+      </table>
     </div>
   </div>
 
