@@ -4,16 +4,18 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project overview
 
-A static web app — FreeCAD learning path from beginner to expert. No build step, no npm, no server required. Open `index.html` directly via `file://` or deploy to GitHub Pages by pushing to `main`.
+Two-page static site — a landing page and a full learning-path app. No build step, no npm, no server required. Both pages work via `file://` and on GitHub Pages.
 
 ## File structure
 
 ```
 freecad-learning-path/
-├── index.html               — HTML skeleton only (no inline CSS or JS)
+├── index.html               — Landing page (entry point for GitHub Pages)
+├── app.html                 — The learning path app (was index.html)
+├── favicon.svg              — Orange gear icon
 ├── assets/
 │   ├── css/
-│   │   └── style.css        — all CSS, including @font-face declarations
+│   │   └── style.css        — App-only CSS, including @font-face declarations
 │   ├── js/
 │   │   ├── data.js          — const DATA (all lesson + challenge content)
 │   │   └── app.js           — STATE, all functions, DOMContentLoaded init
@@ -21,6 +23,10 @@ freecad-learning-path/
 ├── download-fonts.ps1       — one-time script to fetch font files from Google Fonts
 └── CLAUDE.md
 ```
+
+**`index.html`** is the landing page — self-contained with inline CSS, no dependency on `assets/css/style.css`. It uses the same design tokens (colours, fonts) and `assets/fonts/` woff2 files as the app for visual consistency. The theme toggle writes to the same localStorage key (`freecad-lp-v1`) so theme preference is shared between the two pages.
+
+**`app.html`** is the full learning-path app — previously `index.html`.
 
 ## Getting fonts
 

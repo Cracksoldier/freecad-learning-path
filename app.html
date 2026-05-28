@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="A structured FreeCAD learning path from beginner to expert, covering FreeCAD 1.1+. Track your progress through lessons, exercises, and challenges.">
+  <meta property="og:title" content="FreeCAD Learning Path">
+  <meta property="og:description" content="Structured path from beginner to expert for FreeCAD 1.1+. Track lessons, exercises, and challenges.">
+  <meta property="og:type" content="website">
+  <title>FreeCAD Learning Path</title>
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <!-- Must run before first paint to avoid theme flash for light-mode users -->
+  <script>try{var t=JSON.parse(localStorage.getItem("freecad-lp-v1"));if(t&&t.theme==="light")document.documentElement.setAttribute("data-theme","light");}catch(e){}</script>
+  <link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+
+  <!-- HEADER -->
+  <header class="site-header">
+    <div class="header-inner">
+      <div class="brand">
+        <span class="brand-icon">⚙</span>
+        <h1 class="brand-title">FreeCAD Learning Path</h1>
+        <span class="version-badge">v1.1+</span>
+      </div>
+      <div class="header-controls">
+        <button id="themeToggle" class="btn-icon" aria-label="Toggle theme">🌙</button>
+        <button id="exportProgress" class="btn-icon" aria-label="Export progress to file">↓ Export</button>
+        <label class="btn-icon" id="importLabel" role="button" tabindex="0" aria-label="↑ Import progress from file" title="Import progress from file">
+          ↑ Import
+          <input type="file" id="importFile" accept=".json" style="display:none">
+        </label>
+        <button id="resetProgress" class="btn-icon" aria-label="Reset all progress">Reset</button>
+        <button id="shortcutsBtn" class="btn-icon" aria-label="Keyboard shortcuts">?</button>
+      </div>
+    </div>
+  </header>
+
+  <!-- PROGRESS DASHBOARD -->
+  <section class="progress-dashboard" aria-label="Your learning progress">
+    <div class="progress-card">
+      <div class="progress-label">
+        <span>Lessons Completed</span>
+        <span class="progress-count" id="lessonProgressText">0 / 20</span>
+      </div>
+      <div class="progress-track" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" id="lessonProgressTrack">
+        <div class="progress-fill" id="lessonProgressBar"></div>
+      </div>
+    </div>
+    <div class="progress-card">
+      <div class="progress-label">
+        <span>Challenges Completed</span>
+        <span class="progress-count" id="challengeProgressText">0 / 8</span>
+      </div>
+      <div class="progress-track" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" id="challengeProgressTrack">
+        <div class="progress-fill progress-fill--challenge" id="challengeProgressBar"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- RESUME BANNER -->
+  <div id="resumeBanner" hidden></div>
+
+  <!-- SEARCH BAR -->
+  <div class="search-bar">
+    <input type="search" id="searchInput" class="search-input" placeholder="Search lessons…" aria-label="Search lessons">
+    <button id="searchClear" class="search-clear" aria-label="Clear search" hidden>✕</button>
+  </div>
+
+  <!-- LEVEL FILTER NAV -->
+  <nav class="level-nav" aria-label="Filter lessons by level">
+    <button class="level-btn active" data-level="all">All Levels</button>
+    <button class="level-btn" data-level="beginner">Beginner</button>
+    <button class="level-btn" data-level="intermediate">Intermediate</button>
+    <button class="level-btn" data-level="advanced">Advanced</button>
+    <button class="level-btn" data-level="expert">Expert</button>
+  </nav>
+
+  <!-- LEARNING PATH -->
+  <main id="learningPath" aria-label="Learning path content"></main>
+
+  <!-- LESSON MODAL -->
+  <div class="modal-overlay" id="modalOverlay" role="dialog" aria-modal="true" aria-labelledby="modalTitle" hidden>
+    <div class="modal" id="modal">
+      <div class="modal-header">
+        <div class="modal-meta">
+          <span class="modal-level-pill" id="modalLevelPill"></span>
+          <span class="modal-lesson-num" id="modalLessonNum"></span>
+        </div>
+        <button class="modal-close" id="modalClose" aria-label="Close lesson">✕</button>
+      </div>
+      <h2 class="modal-title" id="modalTitle"></h2>
+      <p class="modal-description" id="modalDescription"></p>
+      <div class="modal-section">
+        <h3>What You'll Learn</h3>
+        <ul id="modalObjectives"></ul>
+      </div>
+      <div class="modal-section">
+        <h3>Resources</h3>
+        <ul class="resources-list" id="modalResources"></ul>
+      </div>
+      <div class="modal-section">
+        <h3>Exercises</h3>
+        <ol id="modalExercises"></ol>
+      </div>
+      <div class="modal-section">
+        <h3>My Notes</h3>
+        <textarea id="modalNotes" class="modal-notes" placeholder="Add your notes for this lesson…" rows="4"></textarea>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-bookmark" id="modalBookmarkBtn" aria-label="Bookmark this lesson">📍</button>
+        <button class="btn-complete" id="modalCompleteBtn">Mark as Complete</button>
+        <button class="btn-nav" id="modalPrevBtn" aria-label="Previous lesson">← Previous</button>
+        <button class="btn-nav" id="modalNextBtn" aria-label="Next lesson">Next →</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- KEYBOARD SHORTCUTS OVERLAY -->
+  <div class="modal-overlay" id="shortcutsOverlay" role="dialog" aria-modal="true" aria-label="Keyboard shortcuts" hidden>
+    <div class="shortcuts-modal">
+      <div class="shortcuts-header">
+        <h2>Keyboard Shortcuts</h2>
+        <button id="shortcutsClose" class="modal-close" aria-label="Close shortcuts">✕</button>
+      </div>
+      <table class="shortcuts-table">
+        <tbody>
+          <tr><td><kbd>?</kbd></td><td>Show / hide this cheat sheet</td></tr>
+          <tr><td><kbd>Esc</kbd></td><td>Close lesson modal or this overlay</td></tr>
+          <tr><td><kbd>←</kbd> <kbd>→</kbd></td><td>Navigate between lessons (modal open)</td></tr>
+          <tr><td><kbd>Tab</kbd> / <kbd>Shift+Tab</kbd></td><td>Move focus within modal</td></tr>
+          <tr><td><kbd>Enter</kbd> / <kbd>Space</kbd></td><td>Open focused lesson card</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- TOAST -->
+  <div class="toast" id="toast" aria-live="polite" aria-atomic="true"></div>
+
+  <!-- data.js must load before app.js (DATA global used by app.js) -->
+  <script src="assets/js/data.js"></script>
+  <script src="assets/js/app.js"></script>
+</body>
+</html>
