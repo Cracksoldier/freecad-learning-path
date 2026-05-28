@@ -621,6 +621,8 @@ function resetProgress() {
   STATE.openedLessons.clear();
   STATE.completedChallenges.clear();
   STATE.checkedRequirements = {};
+  STATE.lessonNotes = {};
+  STATE.bookmarkedLessonId = null;
   saveState();
   renderAll();
   showToast("Progress reset.");

@@ -383,8 +383,20 @@
     footer a { color: var(--text-2); }
     footer a:hover { color: var(--orange); }
 
+    /* ── KBD ───────────────────────────────────────────────────────── */
+    .lp-kbd {
+      background: var(--border);
+      border: 1px solid var(--text-3);
+      border-radius: 3px;
+      padding: 1px 5px;
+      font-size: 0.75rem;
+      color: var(--text);
+      font-family: monospace;
+    }
+
     /* ── RESPONSIVE ────────────────────────────────────────────────── */
     @media (max-width: 900px) {
+      .stats-inner { grid-template-columns: repeat(2, 1fr); }
       .levels-grid { grid-template-columns: repeat(2, 1fr); }
       .features-grid { grid-template-columns: repeat(2, 1fr); }
     }
@@ -419,16 +431,17 @@
   <section class="hero">
     <div class="hero-eyebrow">⚙ Free &amp; Open Source</div>
     <h1>Learn <span>FreeCAD 1.1+</span><br>from Zero to Expert</h1>
+    <!-- UPDATE counts when lessons/challenges change in data.js -->
     <p class="hero-sub">A structured, self-paced path through 27 lessons, 8 hands-on challenges, and 4 skill levels — with progress tracking, notes, and no login required.</p>
     <div class="hero-ctas">
       <a href="app.html" class="btn-primary">Start Learning →</a>
-      <a href="https://github.com/Cracksoldier/freecad-learning-path" class="btn-secondary" target="_blank" rel="noopener noreferrer">
+      <a href="#" data-repo-link class="btn-secondary" target="_blank" rel="noopener noreferrer">
         ★ View on GitHub
       </a>
     </div>
   </section>
 
-  <!-- STATS -->
+  <!-- STATS — UPDATE numbers when data.js lesson/challenge count changes -->
   <div class="stats">
     <div class="stats-inner">
       <div class="stat-card">
@@ -552,13 +565,14 @@
         <div class="feature-card">
           <div class="feature-icon">🔍</div>
           <div class="feature-title">Search</div>
+          <!-- UPDATE lesson count when data.js changes -->
           <div class="feature-desc">Filter all 27 lessons by keyword instantly. Combine with the level filter to narrow down exactly what you need.</div>
         </div>
 
         <div class="feature-card">
           <div class="feature-icon">⌨️</div>
           <div class="feature-title">Keyboard navigation</div>
-          <div class="feature-desc">Arrow keys navigate between lessons, Escape closes modals, and <kbd style="background:#334155;border:1px solid #475569;border-radius:3px;padding:1px 5px;font-size:0.75rem;color:#f1f5f9">?</kbd> opens the shortcut cheat sheet.</div>
+          <div class="feature-desc">Arrow keys navigate between lessons, Escape closes modals, and <kbd class="lp-kbd">?</kbd> opens the shortcut cheat sheet.</div>
         </div>
 
       </div>
@@ -578,11 +592,15 @@
   <footer>
     <p>FreeCAD Learning Path &nbsp;·&nbsp; Open source &nbsp;·&nbsp; No login required &nbsp;·&nbsp;
       <a href="app.html">Open App</a> &nbsp;·&nbsp;
-      <a href="https://github.com/Cracksoldier/freecad-learning-path" target="_blank" rel="noopener noreferrer">GitHub</a>
+      <a href="#" data-repo-link target="_blank" rel="noopener noreferrer">GitHub</a>
     </p>
   </footer>
 
   <script>
+    // Single source of truth for the repo URL — update here if the repo is renamed/transferred
+    const REPO_URL = "https://github.com/Cracksoldier/freecad-learning-path";
+    document.querySelectorAll("[data-repo-link]").forEach(a => { a.href = REPO_URL; });
+
     // Theme toggle — mirrors the app's localStorage key
     const btn = document.getElementById("lpTheme");
     function applyTheme(t) {
@@ -594,8 +612,8 @@
       applyTheme(next);
       try { const s = JSON.parse(localStorage.getItem("freecad-lp-v1") || "{}"); s.theme = next; localStorage.setItem("freecad-lp-v1", JSON.stringify(s)); } catch(e) {}
     });
-    // Apply saved theme on load (FOUC script already handled dark→light, but not the button icon)
-    applyTheme(document.documentElement.getAttribute("data-theme") || "dark");
+    // Sync button icon with theme already set by FOUC script in <head>
+    btn.textContent = document.documentElement.getAttribute("data-theme") === "dark" ? "☀" : "🌙";
   </script>
 </body>
 </html>
