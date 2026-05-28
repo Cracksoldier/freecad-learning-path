@@ -9,6 +9,7 @@ const DATA = {
       lessons: [
         {
           id: "b1", levelId: "beginner", num: 1,
+          duration: "~20 min",
           title: "What is FreeCAD & Installation",
           description: "Learn what FreeCAD is, where it fits in the CAD landscape, and how to install version 1.1+ on your operating system.",
           objectives: [
@@ -34,6 +35,7 @@ const DATA = {
         },
         {
           id: "b2", levelId: "beginner", num: 2,
+          duration: "~25 min",
           title: "The FreeCAD Interface",
           description: "Master the FreeCAD UI: the Model tree (Combo View), 3D viewport, Task panel, status bar, and the workbench system.",
           objectives: [
@@ -59,6 +61,7 @@ const DATA = {
         },
         {
           id: "b3", levelId: "beginner", num: 3,
+          duration: "~20 min",
           title: "Navigating the 3D View",
           description: "Learn mouse navigation, the Navigation Cube, standard views, and keyboard shortcuts for moving around your 3D model.",
           objectives: [
@@ -84,6 +87,7 @@ const DATA = {
         },
         {
           id: "b4", levelId: "beginner", num: 4,
+          duration: "~35 min",
           title: "Part Design Basics & Your First Sketch",
           description: "Create a Body in Part Design, enter the Sketcher workbench, and draw a fully constrained sketch using lines, arcs, and dimensional constraints.",
           objectives: [
@@ -108,10 +112,13 @@ const DATA = {
             "Apply Sketch → Constrain vertical distance: set height to 50 mm",
             "Apply Sketch → Fix point to fix the bottom-left corner to the origin (x=0, y=0)",
             "Verify all lines turn green (fully constrained), then close the Sketcher"
+          ,
+            "Repair the broken sketch: a Vertical constraint was applied to a line that already has both endpoints fixed by Coincident constraints. Open the Solver Messages panel, identify the redundant constraint, delete it, and confirm the sketch turns fully green (0 degrees of freedom)."
           ]
         },
         {
           id: "b5", levelId: "beginner", num: 5,
+          duration: "~30 min",
           title: "First 3D Feature — Pad and Pocket",
           description: "Convert your sketch into a 3D solid using Pad, then cut into it with a Pocket. These two operations are the core of Part Design modelling.",
           objectives: [
@@ -195,6 +202,7 @@ const DATA = {
       lessons: [
         {
           id: "i1", levelId: "intermediate", num: 6,
+          duration: "~40 min",
           title: "Advanced Sketching Techniques",
           description: "Level up your Sketcher skills with symmetry constraints, construction geometry, external geometry references, and more efficient constraint workflows.",
           objectives: [
@@ -220,6 +228,7 @@ const DATA = {
         },
         {
           id: "i2", levelId: "intermediate", num: 7,
+          duration: "~45 min",
           title: "Revolution, Loft, and Sweep",
           description: "Create rotationally symmetric parts with Revolution, complex shape transitions with Loft, and profiles swept along a path with SubShapeBinder/Sweep.",
           objectives: [
@@ -242,6 +251,7 @@ const DATA = {
         },
         {
           id: "i3", levelId: "intermediate", num: 8,
+          duration: "~40 min",
           title: "Assembly Workbench (Built-in)",
           description: "Use FreeCAD 1.0+'s built-in Assembly workbench to combine multiple parts using joints. This replaces the need for third-party assembly addons.",
           objectives: [
@@ -266,6 +276,7 @@ const DATA = {
         },
         {
           id: "i4", levelId: "intermediate", num: 9,
+          duration: "~45 min",
           title: "Technical Drawing with TechDraw",
           description: "Generate professional 2D engineering drawings from your 3D models using the TechDraw workbench — complete with views, dimensions, and annotations.",
           objectives: [
@@ -292,6 +303,7 @@ const DATA = {
         },
         {
           id: "i5", levelId: "intermediate", num: 10,
+          duration: "~35 min",
           title: "Spreadsheet-Driven Parametric Models",
           description: "Drive all model dimensions from a Spreadsheet so that changing a single cell updates the entire geometry — the foundation of proper parametric design.",
           objectives: [
@@ -299,7 +311,107 @@ const DATA = {
             "Name cells with aliases (e.g. 'width', 'height')",
             "Reference cell aliases in Sketcher dimension fields using expressions",
             "Understand the FreeCAD expression engine syntax",
-            "Test the parametric model by changing values and watching it update"
+            "Test the parametric model by changing values and watching it update",
+        {
+          id: "i6", levelId: "intermediate", num: 11,
+          duration: "~40 min",
+          title: "The Topology Naming Problem",
+          description: "Understand why references to faces and edges break when models change, how FreeCAD 1.0 mitigated this with TNP-stable references, and design strategies to avoid the problem entirely.",
+          objectives: [
+            "Explain why topological IDs change when features are reordered or modified",
+            "Understand FreeCAD 1.0's TNP mitigation (opaque persistent naming)",
+            "Use Datum planes and lines as stable sketch attachment points",
+            "Recognise 'Sketch is missing a feature' errors and diagnose their cause",
+            "Redesign a sketch to attach to a Datum rather than a face edge"
+          ],
+          resources: [
+            { label: "Topological Naming Problem — Wiki", url: "https://wiki.freecad.org/Topological_naming_problem" },
+            { label: "Release Notes 1.0 — TNP section", url: "https://wiki.freecad.org/Release_notes_1.0#Topological_Naming_Problem_Mitigation" },
+            { label: "PartDesign Datum Plane — Wiki", url: "https://wiki.freecad.org/PartDesign_Plane" }
+          ],
+          exercises: [
+            "Build a stepped block with two Pads and a Pocket that references a face of the first Pad",
+            "Reorder the features in the Model tree by drag-and-drop — observe which Sketches turn red",
+            "Fix the broken references by attaching each Sketch to a Datum Plane instead of a face",
+            "Reorder features again — confirm the model rebuilds cleanly with no red features",
+            "Document in a text file: which three attachment modes are TNP-safe and why"
+          ]
+        },
+        {
+          id: "i7", levelId: "intermediate", num: 12,
+          duration: "~45 min",
+          title: "App::Link & Multi-Document Workflows",
+          description: "Learn to use App::Link to reference parts from other documents without copying geometry, enabling large assemblies where each component lives in its own file.",
+          objectives: [
+            "Understand the difference between a Link and a Copy",
+            "Create an App::Link from one document to another",
+            "Understand how changes to the source document propagate to all links",
+            "Build a multi-document project with a master assembly and separate part files",
+            "Use the Link array to efficiently repeat a component many times"
+          ],
+          resources: [
+            { label: "App Link — Wiki", url: "https://wiki.freecad.org/App_Link" },
+            { label: "Assembly Workbench — Wiki", url: "https://wiki.freecad.org/Assembly_Workbench" },
+            { label: "Multi-document linking — Forum", url: "https://forum.freecad.org/viewtopic.php?t=56499" }
+          ],
+          exercises: [
+            "Create bolt.FCStd with a single M5 bolt model",
+            "Create plate.FCStd with a flat plate and 4 bolt holes",
+            "Create assembly.FCStd; insert bolt.FCStd as a Link 4 times and mate each to a hole",
+            "Change the bolt head diameter in bolt.FCStd — verify all 4 links in assembly.FCStd update automatically",
+            "Use a Link Array to place 12 instances of the bolt around a bolt circle driven by a spreadsheet"
+          ]
+        },
+        {
+          id: "i8", levelId: "intermediate", num: 13,
+          duration: "~35 min",
+          title: "Draft Workbench",
+          description: "Use the Draft workbench for 2D drawing, DXF import and export, and to prepare 2D geometry that feeds into 3D Part Design features.",
+          objectives: [
+            "Switch to the Draft workbench and understand its snapping system",
+            "Draw lines, polylines, and arcs using Draft tools",
+            "Import a DXF file and convert Draft geometry to a Sketch",
+            "Export a drawing as DXF",
+            "Use Draft Scale and Draft Offset for 2D layout work"
+          ],
+          resources: [
+            { label: "Draft Workbench — Wiki", url: "https://wiki.freecad.org/Draft_Workbench" },
+            { label: "Draft DXF — Wiki", url: "https://wiki.freecad.org/Draft_DXF" },
+            { label: "Draft to Sketch — Wiki", url: "https://wiki.freecad.org/Draft_Draft2Sketch" }
+          ],
+          exercises: [
+            "Switch to Draft workbench; draw a simple floor plan outline using Draft Lines with snapping enabled",
+            "Verify you can snap to grid, endpoints, and midpoints",
+            "Export the floor plan as DXF: File → Export → DXF",
+            "Import the DXF back into a new document and convert it using Draft → Draft to Sketch",
+            "Extrude the resulting Sketch 2500 mm using Part Design Pad to create a simple room shell"
+          ]
+        },
+        {
+          id: "i9", levelId: "intermediate", num: 14,
+          duration: "~35 min",
+          title: "Mesh Workbench & 3D Print Prep",
+          description: "Import, inspect, and repair STL/OBJ mesh files, fix common 3D-printing errors, and convert cleaned meshes back to solid geometry.",
+          objectives: [
+            "Import an STL file into the Mesh workbench",
+            "Run mesh analysis: detect non-manifold edges, flipped normals, and holes",
+            "Use Fill Holes and Harmonise Normals to repair common defects",
+            "Convert a watertight mesh to a solid shape via Part workbench",
+            "Export a Part Design solid as STL ready for slicing"
+          ],
+          resources: [
+            { label: "Mesh Workbench — Wiki", url: "https://wiki.freecad.org/Mesh_Workbench" },
+            { label: "Mesh to Part — Wiki", url: "https://wiki.freecad.org/Mesh_to_Part" },
+            { label: "3D Printing with FreeCAD — Wiki", url: "https://wiki.freecad.org/Manual:Preparing_models_for_3D_printing" }
+          ],
+          exercises: [
+            "Download any free STL model and import it into FreeCAD Mesh workbench",
+            "Run Mesh → Analyse → Evaluate & Repair Mesh — note any errors reported",
+            "Use Fill Holes and Harmonise Normals to make the mesh watertight",
+            "Convert to solid: Part workbench → Part → Convert to Solid — check the result has volume > 0",
+            "Export your bracket model from Part Design as STL: File → Export → STL"
+          ]
+        }
           ],
           resources: [
             { label: "Spreadsheet Workbench — Wiki", url: "https://wiki.freecad.org/Spreadsheet_Workbench" },
@@ -313,6 +425,8 @@ const DATA = {
             "Edit the base pad sketch; click a dimension → in the input field type '=Spreadsheet.width'",
             "Do the same for all other parametric dimensions",
             "Test: change B1 from 80 to 120 — the entire model should update automatically"
+          ,
+            "Parametric robustness test: change box_length from 80 to 120 mm, then to 40 mm, then to 200 mm, recomputing after each change. Verify the model rebuilds cleanly each time with no red or yellow features in the tree. Fix any sketch constraints that cause breakage."
           ]
         }
       ],
@@ -371,7 +485,8 @@ const DATA = {
       color: "#a855f7",
       lessons: [
         {
-          id: "a1", levelId: "advanced", num: 11,
+          id: "a1", levelId: "advanced", num: 15,
+          duration: "~45 min",
           title: "Part Workbench — Boolean Operations",
           description: "The Part workbench works with raw shapes (not Bodies). Learn Boolean union, cut, and intersection plus shape primitives — essential for complex geometry.",
           objectives: [
@@ -396,7 +511,8 @@ const DATA = {
           ]
         },
         {
-          id: "a2", levelId: "advanced", num: 12,
+          id: "a2", levelId: "advanced", num: 16,
+          duration: "~60 min",
           title: "FEM Basics — Finite Element Analysis",
           description: "Perform a basic static structural analysis using the FEM workbench. Understand meshing, boundary conditions, loads, and interpreting Von Mises stress results.",
           objectives: [
@@ -421,10 +537,13 @@ const DATA = {
             "Add Force Load on the horizontal ledge: 500 N in the -Z direction",
             "Run solver: FEM → Solver CalculiX Standard → Run",
             "View results: double-click 'CCX_Results', enable Von Mises Stress, note the location of maximum stress"
+          ,
+            "Reproduce this drawing: using the dimensioned bracket from the Beginner Capstone, create a TechDraw page with Front, Top, and Right views plus one Section view through the pocket. Add dimensions for overall width, flange height, hole diameter, and pocket depth. Export as PDF."
           ]
         },
         {
-          id: "a3", levelId: "advanced", num: 13,
+          id: "a3", levelId: "advanced", num: 17,
+          duration: "~55 min",
           title: "Path/CAM Workbench",
           description: "Generate CNC toolpaths from a 3D model using the CAM workbench. Go from 3D model to G-code ready for a CNC machine.",
           objectives: [
@@ -452,7 +571,8 @@ const DATA = {
           ]
         },
         {
-          id: "a4", levelId: "advanced", num: 14,
+          id: "a4", levelId: "advanced", num: 18,
+          duration: "~50 min",
           title: "Macros and Python Scripting Basics",
           description: "Automate FreeCAD tasks using the built-in Python console and macro system. Record, edit, and run macros to eliminate repetitive work.",
           objectives: [
@@ -475,10 +595,13 @@ const DATA = {
             "Open the recorded macro (Macro → Macros → Edit) and add a comment explaining each line",
             "Modify the macro to accept a 'thickness' variable and run it with 3 different values",
             "Assign the macro to a custom toolbar button: Tools → Customize → Toolbars"
+          ,
+            "Model from a photograph: find a photo of a simple mechanical object (e.g. a USB cable clip or a door hinge). Estimate all key dimensions from visual context (compare to known reference objects in the photo). Model the object in FreeCAD with your estimated dimensions. Write the assumptions in a comment at the top of the macro."
           ]
         },
         {
-          id: "a5", levelId: "advanced", num: 15,
+          id: "a5", levelId: "advanced", num: 19,
+          duration: "~45 min",
           title: "Expressions and Formula-Driven Design",
           description: "Go beyond spreadsheets — use FreeCAD's expression engine for trigonometric relationships, property cross-references, and conditional geometry.",
           objectives: [
@@ -486,7 +609,86 @@ const DATA = {
             "Reference properties of other features (e.g. 'Pad.Length * 0.5')",
             "Use ternary expressions for conditional dimensions",
             "Link properties across documents",
-            "Create a self-updating parametric model that enforces design rules"
+            "Create a self-updating parametric model that enforces design rules",
+        {
+          id: "a6", levelId: "advanced", num: 20,
+          duration: "~50 min",
+          title: "Sheet Metal Workbench (Addon)",
+          description: "Design sheet metal parts with fold and unfold operations, apply K-factor and bend relief, and export flat patterns as DXF for laser cutting or CNC punching.",
+          objectives: [
+            "Install the Sheet Metal addon via the Addon Manager",
+            "Create a base flange and add bends, hems, and reliefs",
+            "Understand K-factor and how it affects flat pattern length",
+            "Unfold a sheet metal part to generate its flat pattern",
+            "Export the flat pattern as DXF for manufacturing"
+          ],
+          resources: [
+            { label: "Sheet Metal Workbench — GitHub", url: "https://github.com/shaise/FreeCAD_SheetMetal" },
+            { label: "Sheet Metal Workbench — Wiki", url: "https://wiki.freecad.org/SheetMetal_Workbench" },
+            { label: "Addon Manager — Wiki", url: "https://wiki.freecad.org/Std_AddonMgr" }
+          ],
+          exercises: [
+            "Install the Sheet Metal addon: Tools → Addon Manager → search SheetMetal → Install → restart",
+            "Create a 100x60 mm base flange in 1.5 mm steel using Sheet Metal → Make Base Wall",
+            "Add a 90° bend along the 60 mm edge using Sheet Metal → Make Fold",
+            "Add a hem along the top edge using Sheet Metal → Make Hem",
+            "Set K-factor to 0.42 in the properties; unfold the part and verify the flat pattern dimensions",
+            "Export the flat pattern as DXF: File → Export → DXF"
+          ]
+        },
+        {
+          id: "a7", levelId: "advanced", num: 21,
+          duration: "~45 min",
+          title: "Rendering & Visualization",
+          description: "Produce photorealistic renders of FreeCAD models using the Render workbench or by exporting to Blender, and set up materials and lighting for presentation images.",
+          objectives: [
+            "Install the Render workbench addon",
+            "Apply materials and colours to Part Design features",
+            "Set up a basic three-point lighting rig",
+            "Render a scene with a PovRay or LuxCore renderer",
+            "Export the model as GLTF or OBJ for import into Blender"
+          ],
+          resources: [
+            { label: "Render Workbench — Wiki", url: "https://wiki.freecad.org/Render_Workbench" },
+            { label: "Render Workbench — GitHub", url: "https://github.com/FreeCAD/FreeCAD-render" },
+            { label: "FreeCAD Import/Export — Wiki", url: "https://wiki.freecad.org/Import_Export" }
+          ],
+          exercises: [
+            "Install the Render workbench via Addon Manager",
+            "Open the bracket model; assign a steel material from the Render workbench material library",
+            "Create a Render project: Render → New Render Project → choose PovRay",
+            "Add a camera and three light sources (key, fill, back); adjust positions in the 3D view",
+            "Render the scene and save the output image",
+            "Export the model as GLTF: File → Export → GLTF → import into Blender and verify geometry"
+          ]
+        },
+        {
+          id: "a8", levelId: "advanced", num: 22,
+          duration: "~60 min",
+          title: "Arch / BIM Workbench",
+          description: "Use the Arch/BIM workbench to model architectural elements — walls, floors, roofs, doors, and windows — and export to the IFC open BIM standard.",
+          objectives: [
+            "Activate the BIM workbench and understand its site/building/floor hierarchy",
+            "Create walls, floors, and slabs from sketch profiles",
+            "Insert parametric doors and windows into walls",
+            "Add a simple roof using the Arch Roof tool",
+            "Export the model as IFC for use in other BIM tools"
+          ],
+          resources: [
+            { label: "BIM Workbench — Wiki", url: "https://wiki.freecad.org/BIM_Workbench" },
+            { label: "Arch Workbench — Wiki", url: "https://wiki.freecad.org/Arch_Workbench" },
+            { label: "IFC Export — Wiki", url: "https://wiki.freecad.org/Arch_IFC" },
+            { label: "BIM Tutorial — Wiki", url: "https://wiki.freecad.org/BIM_ingame_tutorial" }
+          ],
+          exercises: [
+            "Switch to BIM workbench; create a Site, Building, and Floor Level hierarchy",
+            "Draw a rectangular floor plan sketch (6x4 m); create 4 walls 2.5 m high from the sketch edges",
+            "Add a floor slab 150 mm thick using Arch Floor",
+            "Insert a door (900x2100 mm) and two windows (1200x1000 mm) into the walls",
+            "Add a gabled roof using Arch Roof",
+            "Export as IFC: Arch → Export IFC — open the file in a free IFC viewer to verify"
+          ]
+        }
           ],
           resources: [
             { label: "Expressions — Wiki", url: "https://wiki.freecad.org/Expressions" },
@@ -557,7 +759,8 @@ const DATA = {
       color: "#ef4444",
       lessons: [
         {
-          id: "e1", levelId: "expert", num: 16,
+          id: "e1", levelId: "expert", num: 23,
+          duration: "~70 min",
           title: "Advanced Python Scripting & the FreeCAD API",
           description: "Deep dive into the FreeCAD Python API. Create documents, features, and shapes entirely via script and understand the App/Gui separation.",
           objectives: [
@@ -582,7 +785,8 @@ const DATA = {
           ]
         },
         {
-          id: "e2", levelId: "expert", num: 17,
+          id: "e2", levelId: "expert", num: 24,
+          duration: "~75 min",
           title: "Scripted Objects (FeaturePython)",
           description: "Create custom parametric FreeCAD objects that behave like built-in features — with typed properties, auto-recompute on change, and a custom icon.",
           objectives: [
@@ -608,7 +812,8 @@ const DATA = {
           ]
         },
         {
-          id: "e3", levelId: "expert", num: 18,
+          id: "e3", levelId: "expert", num: 25,
+          duration: "~80 min",
           title: "Custom Workbench Development",
           description: "Package your tools into a proper FreeCAD workbench addon with menus, toolbars, and commands — ready for the Addon Manager.",
           objectives: [
@@ -633,7 +838,8 @@ const DATA = {
           ]
         },
         {
-          id: "e4", levelId: "expert", num: 19,
+          id: "e4", levelId: "expert", num: 26,
+          duration: "~60 min",
           title: "FreeCAD with Git & Version Control",
           description: "Version control FreeCAD .FCStd files (which are ZIP archives) effectively using Git and companion export workflows.",
           objectives: [
@@ -655,10 +861,13 @@ const DATA = {
             "Make a design change (increase bracket width to 100mm), export a STEP file, commit both",
             "Create a branch 'variant-thicker-flange', change flange to 12mm, commit",
             "Merge the branch back to main — resolve any issues"
+          ,
+            "Collaborate on a public repo: fork any public FreeCAD project on GitHub (e.g. from github.com/FreeCAD/FreeCAD-macros). Clone it locally, open one .FCStd file, make a visible design change (change a dimension or add a feature), export a STEP sidecar, commit both files with a descriptive message, push to your fork, and open a draft pull request explaining the change."
           ]
         },
         {
-          id: "e5", levelId: "expert", num: 20,
+          id: "e5", levelId: "expert", num: 27,
+          duration: "~65 min",
           title: "Contributing to FreeCAD",
           description: "Understand FreeCAD's open-source structure, how to report bugs effectively, and how to contribute code, documentation, and translations.",
           objectives: [
