@@ -928,8 +928,11 @@ label.btn-icon {
 
 @media (max-width: 560px) {
   .progress-dashboard { grid-template-columns: 1fr; }
-  .header-inner { height: 52px; }
+  .header-inner { height: auto; min-height: 52px; padding: 6px 16px; flex-wrap: wrap; }
   .brand-title { display: none; }
+  .header-controls { flex-wrap: wrap; gap: 4px; }
+  .btn-icon { font-size: 0.75rem; padding: 5px 9px; }
+  #themeToggle { font-size: 0.95rem; padding: 5px 8px; }
   .lessons-grid { grid-template-columns: 1fr; }
   .level-section { padding: 20px 16px; }
 }
