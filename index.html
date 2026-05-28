@@ -3,143 +3,599 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="A structured FreeCAD learning path from beginner to expert, covering FreeCAD 1.1+. Track your progress through lessons, exercises, and challenges.">
+  <meta name="description" content="A structured, self-paced FreeCAD learning path from complete beginner to expert. 27 lessons, 8 challenges, 4 skill levels — free and open source.">
   <meta property="og:title" content="FreeCAD Learning Path">
-  <meta property="og:description" content="Structured path from beginner to expert for FreeCAD 1.1+. Track lessons, exercises, and challenges.">
+  <meta property="og:description" content="Learn FreeCAD 1.1+ from zero to expert. 27 lessons, 8 challenges, progress tracking, notes, and more — no login required.">
   <meta property="og:type" content="website">
   <title>FreeCAD Learning Path</title>
   <link rel="icon" href="favicon.svg" type="image/svg+xml">
-  <!-- Must run before first paint to avoid theme flash for light-mode users -->
   <script>try{var t=JSON.parse(localStorage.getItem("freecad-lp-v1"));if(t&&t.theme==="light")document.documentElement.setAttribute("data-theme","light");}catch(e){}</script>
-  <link rel="stylesheet" href="assets/css/style.css">
+  <style>
+    /* ── FONTS ─────────────────────────────────────────────────────── */
+    @font-face { font-family:'Inter'; font-style:normal; font-weight:400; font-display:swap; src:url('assets/fonts/inter-400.woff2') format('woff2'); }
+    @font-face { font-family:'Inter'; font-style:normal; font-weight:500; font-display:swap; src:url('assets/fonts/inter-500.woff2') format('woff2'); }
+    @font-face { font-family:'Inter'; font-style:normal; font-weight:600; font-display:swap; src:url('assets/fonts/inter-600.woff2') format('woff2'); }
+    @font-face { font-family:'Inter'; font-style:normal; font-weight:700; font-display:swap; src:url('assets/fonts/inter-700.woff2') format('woff2'); }
+
+    /* ── TOKENS ────────────────────────────────────────────────────── */
+    :root {
+      --orange:      #f97316;
+      --orange-dim:  rgba(249,115,22,0.12);
+      --orange-dark: #ea6b0a;
+      --green:       #22c55e;
+      --blue:        #3b82f6;
+      --purple:      #a855f7;
+      --red:         #ef4444;
+
+      --bg:          #f8fafc;
+      --bg-card:     #ffffff;
+      --bg-header:   #1e293b;
+      --text:        #0f172a;
+      --text-2:      #475569;
+      --text-3:      #94a3b8;
+      --border:      #e2e8f0;
+
+      --font: 'Inter', system-ui, -apple-system, sans-serif;
+      --radius: 12px;
+      --shadow: 0 4px 6px rgba(0,0,0,0.07), 0 2px 4px rgba(0,0,0,0.05);
+      --shadow-lg: 0 10px 24px rgba(0,0,0,0.10);
+    }
+    [data-theme="dark"] {
+      --bg:        #0f172a;
+      --bg-card:   #1e293b;
+      --bg-header: #020617;
+      --text:      #f1f5f9;
+      --text-2:    #94a3b8;
+      --text-3:    #475569;
+      --border:    #334155;
+      --shadow:    0 4px 6px rgba(0,0,0,0.30);
+      --shadow-lg: 0 10px 24px rgba(0,0,0,0.40);
+    }
+
+    /* ── RESET ─────────────────────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: var(--font);
+      font-size: 1rem;
+      line-height: 1.6;
+      color: var(--text);
+      background: var(--bg);
+      transition: background 250ms ease, color 250ms ease;
+    }
+    a { color: var(--orange); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+
+    /* ── LAYOUT ────────────────────────────────────────────────────── */
+    .wrap { max-width: 1100px; margin: 0 auto; padding: 0 20px; }
+
+    /* ── HEADER ────────────────────────────────────────────────────── */
+    .lp-header {
+      background: var(--bg-header);
+      padding: 0 20px;
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+    }
+    .lp-header-inner {
+      max-width: 1100px;
+      margin: 0 auto;
+      height: 56px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .lp-brand {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-weight: 700;
+      font-size: 1rem;
+      color: #f8fafc;
+      letter-spacing: -0.01em;
+    }
+    .lp-brand-icon { font-size: 1.25rem; }
+    .lp-badge {
+      background: var(--orange);
+      color: #fff;
+      font-size: 0.68rem;
+      font-weight: 700;
+      padding: 1px 7px;
+      border-radius: 9999px;
+      letter-spacing: 0.04em;
+    }
+    .lp-header-actions { display: flex; align-items: center; gap: 10px; }
+    .lp-btn-ghost {
+      background: rgba(255,255,255,0.08);
+      color: #f8fafc;
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 8px;
+      padding: 6px 14px;
+      font-size: 0.85rem;
+      font-weight: 500;
+      cursor: pointer;
+      font-family: var(--font);
+      transition: background 150ms ease;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+    }
+    .lp-btn-ghost:hover { background: rgba(255,255,255,0.15); text-decoration: none; }
+    #lpTheme { font-size: 1rem; padding: 6px 9px; }
+
+    /* ── HERO ──────────────────────────────────────────────────────── */
+    .hero {
+      padding: 96px 20px 80px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .hero::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse 80% 60% at 50% 0%, rgba(249,115,22,0.12) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    .hero-eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: var(--orange-dim);
+      border: 1px solid rgba(249,115,22,0.3);
+      border-radius: 9999px;
+      padding: 4px 14px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--orange);
+      margin-bottom: 24px;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+    .hero h1 {
+      font-size: clamp(2rem, 5vw, 3.25rem);
+      font-weight: 800;
+      line-height: 1.15;
+      letter-spacing: -0.03em;
+      color: var(--text);
+      margin-bottom: 20px;
+      max-width: 760px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    .hero h1 span { color: var(--orange); }
+    .hero-sub {
+      font-size: 1.1rem;
+      color: var(--text-2);
+      max-width: 560px;
+      margin: 0 auto 36px;
+      line-height: 1.7;
+    }
+    .hero-ctas {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+    .btn-primary {
+      background: var(--orange);
+      color: #fff;
+      border: none;
+      border-radius: 10px;
+      padding: 13px 28px;
+      font-size: 1rem;
+      font-weight: 700;
+      cursor: pointer;
+      font-family: var(--font);
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      transition: background 150ms ease, transform 150ms ease;
+      box-shadow: 0 4px 14px rgba(249,115,22,0.35);
+    }
+    .btn-primary:hover { background: var(--orange-dark); transform: translateY(-1px); text-decoration: none; }
+    .btn-secondary {
+      background: var(--bg-card);
+      color: var(--text);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 12px 24px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      font-family: var(--font);
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 150ms ease;
+    }
+    .btn-secondary:hover { border-color: var(--orange); color: var(--orange); text-decoration: none; }
+
+    /* ── STATS ─────────────────────────────────────────────────────── */
+    .stats {
+      padding: 0 20px 64px;
+    }
+    .stats-inner {
+      max-width: 1100px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+    }
+    .stat-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 24px 20px;
+      text-align: center;
+      box-shadow: var(--shadow);
+    }
+    .stat-number {
+      font-size: 2.25rem;
+      font-weight: 800;
+      color: var(--orange);
+      line-height: 1;
+      margin-bottom: 4px;
+      letter-spacing: -0.03em;
+    }
+    .stat-label {
+      font-size: 0.875rem;
+      color: var(--text-2);
+      font-weight: 500;
+    }
+
+    /* ── SECTION HEADINGS ──────────────────────────────────────────── */
+    .section { padding: 64px 20px; }
+    .section-head { text-align: center; margin-bottom: 48px; }
+    .section-head h2 {
+      font-size: clamp(1.5rem, 3vw, 2rem);
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      color: var(--text);
+      margin-bottom: 10px;
+    }
+    .section-head p { font-size: 1rem; color: var(--text-2); max-width: 500px; margin: 0 auto; }
+
+    /* ── LEVELS GRID ───────────────────────────────────────────────── */
+    .levels-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 20px;
+    }
+    .level-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 24px;
+      box-shadow: var(--shadow);
+      border-top: 4px solid;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .level-card--beginner    { border-top-color: var(--green);  }
+    .level-card--intermediate { border-top-color: var(--blue);  }
+    .level-card--advanced    { border-top-color: var(--purple); }
+    .level-card--expert      { border-top-color: var(--red);    }
+
+    .level-pill {
+      display: inline-flex;
+      align-items: center;
+      padding: 3px 10px;
+      border-radius: 9999px;
+      font-size: 0.7rem;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: #fff;
+      width: fit-content;
+    }
+    .level-pill--beginner    { background: var(--green);  }
+    .level-pill--intermediate { background: var(--blue);  }
+    .level-pill--advanced    { background: var(--purple); }
+    .level-pill--expert      { background: var(--red);    }
+
+    .level-card-title {
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--text);
+    }
+    .level-card-count {
+      font-size: 0.8rem;
+      color: var(--text-3);
+      font-weight: 500;
+    }
+    .level-topics {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+      flex: 1;
+    }
+    .level-topics li {
+      font-size: 0.85rem;
+      color: var(--text-2);
+      display: flex;
+      align-items: flex-start;
+      gap: 6px;
+    }
+    .level-topics li::before {
+      content: "›";
+      color: var(--text-3);
+      flex-shrink: 0;
+      line-height: 1.5;
+    }
+
+    /* ── FEATURES GRID ─────────────────────────────────────────────── */
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+    }
+    .feature-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 24px;
+      box-shadow: var(--shadow);
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .feature-icon { font-size: 1.5rem; line-height: 1; }
+    .feature-title { font-size: 0.95rem; font-weight: 700; color: var(--text); }
+    .feature-desc { font-size: 0.875rem; color: var(--text-2); line-height: 1.55; }
+
+    /* ── CTA BAND ──────────────────────────────────────────────────── */
+    .cta-band {
+      padding: 64px 20px;
+      text-align: center;
+    }
+    .cta-inner {
+      max-width: 1100px;
+      margin: 0 auto;
+      background: linear-gradient(135deg, rgba(249,115,22,0.12), rgba(168,85,247,0.10));
+      border: 1px solid rgba(249,115,22,0.25);
+      border-radius: 20px;
+      padding: 56px 40px;
+    }
+    .cta-band h2 {
+      font-size: clamp(1.5rem, 3vw, 2rem);
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      color: var(--text);
+      margin-bottom: 12px;
+    }
+    .cta-band p { font-size: 1rem; color: var(--text-2); margin-bottom: 28px; }
+
+    /* ── FOOTER ────────────────────────────────────────────────────── */
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 28px 20px;
+      text-align: center;
+      font-size: 0.875rem;
+      color: var(--text-3);
+    }
+    footer a { color: var(--text-2); }
+    footer a:hover { color: var(--orange); }
+
+    /* ── RESPONSIVE ────────────────────────────────────────────────── */
+    @media (max-width: 900px) {
+      .levels-grid { grid-template-columns: repeat(2, 1fr); }
+      .features-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+    @media (max-width: 600px) {
+      .stats-inner { grid-template-columns: repeat(2, 1fr); }
+      .levels-grid { grid-template-columns: 1fr; }
+      .features-grid { grid-template-columns: 1fr; }
+      .hero { padding: 64px 20px 48px; }
+      .cta-inner { padding: 40px 24px; }
+      .lp-brand span:not(.lp-brand-icon):not(.lp-badge) { display: none; }
+    }
+  </style>
 </head>
 <body>
 
   <!-- HEADER -->
-  <header class="site-header">
-    <div class="header-inner">
-      <div class="brand">
-        <span class="brand-icon">⚙</span>
-        <h1 class="brand-title">FreeCAD Learning Path</h1>
-        <span class="version-badge">v1.1+</span>
+  <header class="lp-header">
+    <div class="lp-header-inner">
+      <div class="lp-brand">
+        <span class="lp-brand-icon">⚙</span>
+        <span>FreeCAD Learning Path</span>
+        <span class="lp-badge">v1.1+</span>
       </div>
-      <div class="header-controls">
-        <button id="themeToggle" class="btn-icon" aria-label="Toggle theme">🌙</button>
-        <button id="exportProgress" class="btn-icon" aria-label="Export progress to file">↓ Export</button>
-        <label class="btn-icon" id="importLabel" role="button" tabindex="0" aria-label="↑ Import progress from file" title="Import progress from file">
-          ↑ Import
-          <input type="file" id="importFile" accept=".json" style="display:none">
-        </label>
-        <button id="resetProgress" class="btn-icon" aria-label="Reset all progress">Reset</button>
-        <button id="shortcutsBtn" class="btn-icon" aria-label="Keyboard shortcuts">?</button>
+      <div class="lp-header-actions">
+        <button id="lpTheme" class="lp-btn-ghost" aria-label="Toggle theme">🌙</button>
+        <a href="app.html" class="lp-btn-ghost">Open App →</a>
       </div>
     </div>
   </header>
 
-  <!-- PROGRESS DASHBOARD -->
-  <section class="progress-dashboard" aria-label="Your learning progress">
-    <div class="progress-card">
-      <div class="progress-label">
-        <span>Lessons Completed</span>
-        <span class="progress-count" id="lessonProgressText">0 / 20</span>
+  <!-- HERO -->
+  <section class="hero">
+    <div class="hero-eyebrow">⚙ Free &amp; Open Source</div>
+    <h1>Learn <span>FreeCAD 1.1+</span><br>from Zero to Expert</h1>
+    <p class="hero-sub">A structured, self-paced path through 27 lessons, 8 hands-on challenges, and 4 skill levels — with progress tracking, notes, and no login required.</p>
+    <div class="hero-ctas">
+      <a href="app.html" class="btn-primary">Start Learning →</a>
+      <a href="https://github.com/Cracksoldier/freecad-learning-path" class="btn-secondary" target="_blank" rel="noopener noreferrer">
+        ★ View on GitHub
+      </a>
+    </div>
+  </section>
+
+  <!-- STATS -->
+  <div class="stats">
+    <div class="stats-inner">
+      <div class="stat-card">
+        <div class="stat-number">27</div>
+        <div class="stat-label">Lessons</div>
       </div>
-      <div class="progress-track" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" id="lessonProgressTrack">
-        <div class="progress-fill" id="lessonProgressBar"></div>
+      <div class="stat-card">
+        <div class="stat-number">8</div>
+        <div class="stat-label">Challenges</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-number">4</div>
+        <div class="stat-label">Skill Levels</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-number">Free</div>
+        <div class="stat-label">No login required</div>
       </div>
     </div>
-    <div class="progress-card">
-      <div class="progress-label">
-        <span>Challenges Completed</span>
-        <span class="progress-count" id="challengeProgressText">0 / 8</span>
+  </div>
+
+  <!-- LEVELS -->
+  <section class="section">
+    <div class="wrap">
+      <div class="section-head">
+        <h2>A clear path from day one to expert</h2>
+        <p>Each level builds on the last. Start at Beginner and work up — or jump directly to the level that fits where you are now.</p>
       </div>
-      <div class="progress-track" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" id="challengeProgressTrack">
-        <div class="progress-fill progress-fill--challenge" id="challengeProgressBar"></div>
+      <div class="levels-grid">
+
+        <div class="level-card level-card--beginner">
+          <span class="level-pill level-pill--beginner">Beginner</span>
+          <div class="level-card-title">Getting Started</div>
+          <div class="level-card-count">5 lessons · 2 challenges</div>
+          <ul class="level-topics">
+            <li>Installation &amp; interface overview</li>
+            <li>3D view navigation</li>
+            <li>Your first sketch and 3D feature</li>
+            <li>Pad and Pocket operations</li>
+            <li>Model a wall-mount bracket</li>
+          </ul>
+        </div>
+
+        <div class="level-card level-card--intermediate">
+          <span class="level-pill level-pill--intermediate">Intermediate</span>
+          <div class="level-card-title">Expanding Your Toolkit</div>
+          <div class="level-card-count">9 lessons · 2 challenges</div>
+          <ul class="level-topics">
+            <li>Assembly workbench (built-in)</li>
+            <li>TechDraw engineering drawings</li>
+            <li>Spreadsheet-driven parametric design</li>
+            <li>Topology Naming Problem &amp; fixes</li>
+            <li>Draft workbench &amp; DXF export</li>
+            <li>Mesh repair &amp; 3D print prep</li>
+          </ul>
+        </div>
+
+        <div class="level-card level-card--advanced">
+          <span class="level-pill level-pill--advanced">Advanced</span>
+          <div class="level-card-title">Power Tools &amp; Analysis</div>
+          <div class="level-card-count">8 lessons · 2 challenges</div>
+          <ul class="level-topics">
+            <li>FEM static analysis (CalculiX)</li>
+            <li>CAM / Path workbench &amp; G-code</li>
+            <li>Sheet Metal addon (fold, unfold, DXF)</li>
+            <li>Rendering &amp; Blender export</li>
+            <li>Arch / BIM workbench &amp; IFC</li>
+          </ul>
+        </div>
+
+        <div class="level-card level-card--expert">
+          <span class="level-pill level-pill--expert">Expert</span>
+          <div class="level-card-title">Scripting &amp; Contributing</div>
+          <div class="level-card-count">5 lessons · 2 challenges</div>
+          <ul class="level-topics">
+            <li>Python API &amp; batch scripting</li>
+            <li>FeaturePython scripted objects</li>
+            <li>Custom workbench development</li>
+            <li>FreeCAD with Git</li>
+            <li>Contributing to FreeCAD</li>
+          </ul>
+        </div>
+
       </div>
     </div>
   </section>
 
-  <!-- RESUME BANNER -->
-  <div id="resumeBanner" hidden></div>
+  <!-- FEATURES -->
+  <section class="section" style="padding-top:0">
+    <div class="wrap">
+      <div class="section-head">
+        <h2>Everything you need to stay on track</h2>
+        <p>The app is a single HTML file — no install, no account. Open it directly or deploy it on GitHub Pages.</p>
+      </div>
+      <div class="features-grid">
 
-  <!-- SEARCH BAR -->
-  <div class="search-bar">
-    <input type="search" id="searchInput" class="search-input" placeholder="Search lessons…" aria-label="Search lessons">
-    <button id="searchClear" class="search-clear" aria-label="Clear search" hidden>✕</button>
-  </div>
-
-  <!-- LEVEL FILTER NAV -->
-  <nav class="level-nav" aria-label="Filter lessons by level">
-    <button class="level-btn active" data-level="all">All Levels</button>
-    <button class="level-btn" data-level="beginner">Beginner</button>
-    <button class="level-btn" data-level="intermediate">Intermediate</button>
-    <button class="level-btn" data-level="advanced">Advanced</button>
-    <button class="level-btn" data-level="expert">Expert</button>
-  </nav>
-
-  <!-- LEARNING PATH -->
-  <main id="learningPath" aria-label="Learning path content"></main>
-
-  <!-- LESSON MODAL -->
-  <div class="modal-overlay" id="modalOverlay" role="dialog" aria-modal="true" aria-labelledby="modalTitle" hidden>
-    <div class="modal" id="modal">
-      <div class="modal-header">
-        <div class="modal-meta">
-          <span class="modal-level-pill" id="modalLevelPill"></span>
-          <span class="modal-lesson-num" id="modalLessonNum"></span>
+        <div class="feature-card">
+          <div class="feature-icon">📊</div>
+          <div class="feature-title">Progress tracking</div>
+          <div class="feature-desc">Two animated progress bars — one for lessons, one for challenges — saved locally in your browser.</div>
         </div>
-        <button class="modal-close" id="modalClose" aria-label="Close lesson">✕</button>
+
+        <div class="feature-card">
+          <div class="feature-icon">📝</div>
+          <div class="feature-title">Per-lesson notes</div>
+          <div class="feature-desc">Write and save notes inside any lesson. They're stored alongside your progress and shown as a badge on the card.</div>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon">📤</div>
+          <div class="feature-title">Export &amp; import</div>
+          <div class="feature-desc">Back up your progress as a JSON file and restore it on any device — no account or cloud required.</div>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon">🔖</div>
+          <div class="feature-title">Resume bookmark</div>
+          <div class="feature-desc">Pin any lesson to the top of the page so you can jump straight back where you left off.</div>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon">🔍</div>
+          <div class="feature-title">Search</div>
+          <div class="feature-desc">Filter all 27 lessons by keyword instantly. Combine with the level filter to narrow down exactly what you need.</div>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon">⌨️</div>
+          <div class="feature-title">Keyboard navigation</div>
+          <div class="feature-desc">Arrow keys navigate between lessons, Escape closes modals, and <kbd style="background:#334155;border:1px solid #475569;border-radius:3px;padding:1px 5px;font-size:0.75rem;color:#f1f5f9">?</kbd> opens the shortcut cheat sheet.</div>
+        </div>
+
       </div>
-      <h2 class="modal-title" id="modalTitle"></h2>
-      <p class="modal-description" id="modalDescription"></p>
-      <div class="modal-section">
-        <h3>What You'll Learn</h3>
-        <ul id="modalObjectives"></ul>
-      </div>
-      <div class="modal-section">
-        <h3>Resources</h3>
-        <ul class="resources-list" id="modalResources"></ul>
-      </div>
-      <div class="modal-section">
-        <h3>Exercises</h3>
-        <ol id="modalExercises"></ol>
-      </div>
-      <div class="modal-section">
-        <h3>My Notes</h3>
-        <textarea id="modalNotes" class="modal-notes" placeholder="Add your notes for this lesson…" rows="4"></textarea>
-      </div>
-      <div class="modal-footer">
-        <button class="btn-bookmark" id="modalBookmarkBtn" aria-label="Bookmark this lesson">📍</button>
-        <button class="btn-complete" id="modalCompleteBtn">Mark as Complete</button>
-        <button class="btn-nav" id="modalPrevBtn" aria-label="Previous lesson">← Previous</button>
-        <button class="btn-nav" id="modalNextBtn" aria-label="Next lesson">Next →</button>
-      </div>
+    </div>
+  </section>
+
+  <!-- CTA BAND -->
+  <div class="cta-band">
+    <div class="cta-inner">
+      <h2>Ready to start modelling?</h2>
+      <p>No account, no download, no setup — just open the app and start learning.</p>
+      <a href="app.html" class="btn-primary" style="font-size:1.05rem;padding:14px 32px;">Open the Learning Path →</a>
     </div>
   </div>
 
-  <!-- KEYBOARD SHORTCUTS OVERLAY -->
-  <div class="modal-overlay" id="shortcutsOverlay" role="dialog" aria-modal="true" aria-label="Keyboard shortcuts" hidden>
-    <div class="shortcuts-modal">
-      <div class="shortcuts-header">
-        <h2>Keyboard Shortcuts</h2>
-        <button id="shortcutsClose" class="modal-close" aria-label="Close shortcuts">✕</button>
-      </div>
-      <table class="shortcuts-table">
-        <tbody>
-          <tr><td><kbd>?</kbd></td><td>Show / hide this cheat sheet</td></tr>
-          <tr><td><kbd>Esc</kbd></td><td>Close lesson modal or this overlay</td></tr>
-          <tr><td><kbd>←</kbd> <kbd>→</kbd></td><td>Navigate between lessons (modal open)</td></tr>
-          <tr><td><kbd>Tab</kbd> / <kbd>Shift+Tab</kbd></td><td>Move focus within modal</td></tr>
-          <tr><td><kbd>Enter</kbd> / <kbd>Space</kbd></td><td>Open focused lesson card</td></tr>
-        </tbody>
-      </table>
-    </div>
-  </div>
+  <!-- FOOTER -->
+  <footer>
+    <p>FreeCAD Learning Path &nbsp;·&nbsp; Open source &nbsp;·&nbsp; No login required &nbsp;·&nbsp;
+      <a href="app.html">Open App</a> &nbsp;·&nbsp;
+      <a href="https://github.com/Cracksoldier/freecad-learning-path" target="_blank" rel="noopener noreferrer">GitHub</a>
+    </p>
+  </footer>
 
-  <!-- TOAST -->
-  <div class="toast" id="toast" aria-live="polite" aria-atomic="true"></div>
-
-  <!-- data.js must load before app.js (DATA global used by app.js) -->
-  <script src="assets/js/data.js"></script>
-  <script src="assets/js/app.js"></script>
+  <script>
+    // Theme toggle — mirrors the app's localStorage key
+    const btn = document.getElementById("lpTheme");
+    function applyTheme(t) {
+      document.documentElement.setAttribute("data-theme", t);
+      btn.textContent = t === "dark" ? "☀" : "🌙";
+    }
+    btn.addEventListener("click", () => {
+      const next = document.documentElement.getAttribute("data-theme") === "dark" ? "light" : "dark";
+      applyTheme(next);
+      try { const s = JSON.parse(localStorage.getItem("freecad-lp-v1") || "{}"); s.theme = next; localStorage.setItem("freecad-lp-v1", JSON.stringify(s)); } catch(e) {}
+    });
+    // Apply saved theme on load (FOUC script already handled dark→light, but not the button icon)
+    applyTheme(document.documentElement.getAttribute("data-theme") || "dark");
+  </script>
 </body>
 </html>
