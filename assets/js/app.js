@@ -408,6 +408,62 @@ function filterByLevel(levelId) {
 }
 
 /* =====================================================================
+   EXPORT / IMPORT
+===================================================================== */
+function exportProgress() {
+  const checkedReqs = {};
+  for (const [k, v] of Object.entries(STATE.checkedRequirements)) {
+    checkedReqs[k] = [...v];
+  }
+  const payload = JSON.stringify({
+    version: 1,
+    exportedAt: new Date().toISOString(),
+    theme: STATE.theme,
+    completedLessons: [...STATE.completedLessons],
+    openedLessons: [...STATE.openedLessons],
+    completedChallenges: [...STATE.completedChallenges],
+    checkedRequirements: checkedReqs
+  }, null, 2);
+
+  const date = new Date().toISOString().slice(0, 10);
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(new Blob([payload], { type: "application/json" }));
+  a.download = `freecad-progress-${date}.json`;
+  a.click();
+  URL.revokeObjectURL(a.href);
+  showToast("Progress exported.");
+}
+
+function importProgress(file) {
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    try {
+      const data = JSON.parse(e.target.result);
+      if (!data || typeof data !== "object" || Array.isArray(data)) throw new Error();
+
+      if (data.theme === "dark" || data.theme === "light") STATE.theme = data.theme;
+      if (Array.isArray(data.completedLessons))   STATE.completedLessons   = new Set(data.completedLessons.filter(x => typeof x === "string"));
+      if (Array.isArray(data.openedLessons))       STATE.openedLessons      = new Set(data.openedLessons.filter(x => typeof x === "string"));
+      if (Array.isArray(data.completedChallenges)) STATE.completedChallenges = new Set(data.completedChallenges.filter(x => typeof x === "string"));
+      if (data.checkedRequirements && typeof data.checkedRequirements === "object" && !Array.isArray(data.checkedRequirements)) {
+        STATE.checkedRequirements = {};
+        for (const [k, v] of Object.entries(data.checkedRequirements)) {
+          STATE.checkedRequirements[k] = new Set(Array.isArray(v) ? v : []);
+        }
+      }
+
+      applyTheme(STATE.theme);
+      saveState();
+      renderAll();
+      showToast("Progress imported.");
+    } catch (err) {
+      showToast("Import failed: invalid file.");
+    }
+  };
+  reader.readAsText(file);
+}
+
+/* =====================================================================
    RESET
 ===================================================================== */
 function resetProgress() {
@@ -447,6 +503,16 @@ function attachStaticListeners() {
   document.getElementById("themeToggle").addEventListener("click", () => {
     applyTheme(STATE.theme === "dark" ? "light" : "dark");
     saveState();
+  });
+
+  // Export / import progress
+  document.getElementById("exportProgress").addEventListener("click", exportProgress);
+  document.getElementById("importFile").addEventListener("change", (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      importProgress(file);
+      e.target.value = ""; // reset so the same file can be re-imported
+    }
   });
 
   // Reset progress

@@ -25,7 +25,12 @@
       </div>
       <div class="header-controls">
         <button id="themeToggle" class="btn-icon" aria-label="Toggle theme">🌙</button>
-        <button id="resetProgress" class="btn-icon" aria-label="Reset all progress">Reset Progress</button>
+        <button id="exportProgress" class="btn-icon" aria-label="Export progress to file">↓ Export</button>
+        <label class="btn-icon" aria-label="Import progress from file" title="Import progress from file">
+          ↑ Import
+          <input type="file" id="importFile" accept=".json" style="display:none">
+        </label>
+        <button id="resetProgress" class="btn-icon" aria-label="Reset all progress">Reset</button>
       </div>
     </div>
   </header>

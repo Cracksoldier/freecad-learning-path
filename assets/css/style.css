@@ -241,6 +241,13 @@ button {
 
 .btn-icon:hover { background: rgba(255,255,255,0.15); }
 
+label.btn-icon {
+  display: inline-flex;
+  align-items: center;
+  cursor: pointer;
+  user-select: none;
+}
+
 #themeToggle { font-size: 1.1rem; padding: 6px 10px; }
 
 #resetProgress {
