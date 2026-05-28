@@ -1,0 +1,2301 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="A structured FreeCAD learning path from beginner to expert, covering FreeCAD 1.1+. Track your progress through lessons, exercises, and challenges.">
+  <meta property="og:title" content="FreeCAD Learning Path">
+  <meta property="og:description" content="Structured path from beginner to expert for FreeCAD 1.1+. Track lessons, exercises, and challenges.">
+  <meta property="og:type" content="website">
+  <title>FreeCAD Learning Path</title>
+  <script>try{var t=JSON.parse(localStorage.getItem("freecad-lp-v1"));if(t&&t.theme==="light")document.documentElement.setAttribute("data-theme","light");}catch(e){}</script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" onload="this.rel='stylesheet'">
+  <noscript><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"></noscript>
+  <style>
+    /* =====================================================================
+       DESIGN TOKENS
+    ===================================================================== */
+    :root {
+      --color-primary: #f97316;
+      --color-primary-hover: #ea6b0a;
+      --color-primary-dim: rgba(249,115,22,0.12);
+
+      --bg-page: #f8fafc;
+      --bg-card: #ffffff;
+      --bg-card-hover: #f1f5f9;
+      --bg-header: #1e293b;
+      --bg-modal: #ffffff;
+      --bg-overlay: rgba(0,0,0,0.55);
+      --bg-level-section: #f1f5f9;
+
+      --text-primary: #0f172a;
+      --text-secondary: #475569;
+      --text-muted: #94a3b8;
+      --text-on-dark: #f8fafc;
+
+      --border: #e2e8f0;
+      --border-focus: #f97316;
+
+      --level-beginner: #22c55e;
+      --level-intermediate: #3b82f6;
+      --level-advanced: #a855f7;
+      --level-expert: #ef4444;
+
+      --level-beginner-dim: rgba(34,197,94,0.12);
+      --level-intermediate-dim: rgba(59,130,246,0.12);
+      --level-advanced-dim: rgba(168,85,247,0.12);
+      --level-expert-dim: rgba(239,68,68,0.12);
+
+      --status-locked: #94a3b8;
+      --status-progress: #f97316;
+      --status-complete: #22c55e;
+
+      --progress-track: #e2e8f0;
+      --progress-lesson: #f97316;
+      --progress-challenge: #3b82f6;
+
+      --font-body: 'Inter', system-ui, -apple-system, sans-serif;
+      --font-mono: 'JetBrains Mono', 'Courier New', monospace;
+
+      --radius-sm: 4px;
+      --radius-md: 8px;
+      --radius-lg: 12px;
+      --radius-xl: 16px;
+      --radius-full: 9999px;
+
+      --shadow-sm: 0 1px 2px rgba(0,0,0,0.05);
+      --shadow-md: 0 4px 6px rgba(0,0,0,0.07), 0 2px 4px rgba(0,0,0,0.05);
+      --shadow-lg: 0 10px 15px rgba(0,0,0,0.10), 0 4px 6px rgba(0,0,0,0.05);
+      --shadow-modal: 0 25px 50px rgba(0,0,0,0.25);
+
+      --transition-fast: 150ms ease;
+      --transition-base: 250ms ease;
+      --transition-slow: 400ms cubic-bezier(0.4,0,0.2,1);
+    }
+
+    [data-theme="dark"] {
+      --bg-page: #0f172a;
+      --bg-card: #1e293b;
+      --bg-card-hover: #263348;
+      --bg-header: #020617;
+      --bg-modal: #1e293b;
+      --bg-overlay: rgba(0,0,0,0.72);
+      --bg-level-section: #172033;
+
+      --text-primary: #f1f5f9;
+      --text-secondary: #94a3b8;
+      --text-muted: #475569;
+
+      --border: #334155;
+      --progress-track: #334155;
+
+      --shadow-md: 0 4px 6px rgba(0,0,0,0.30);
+      --shadow-lg: 0 10px 15px rgba(0,0,0,0.40);
+      --shadow-modal: 0 25px 50px rgba(0,0,0,0.60);
+    }
+
+    /* =====================================================================
+       RESET & BASE
+    ===================================================================== */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: var(--font-body);
+      font-size: 1rem;
+      line-height: 1.6;
+      color: var(--text-primary);
+      background: var(--bg-page);
+      transition: background var(--transition-base), color var(--transition-base);
+      min-height: 100vh;
+    }
+
+    body.modal-open { overflow: hidden; }
+
+    a {
+      color: var(--color-primary);
+      text-decoration: none;
+    }
+    a:hover { text-decoration: underline; }
+
+    ul, ol { padding-left: 1.25rem; }
+
+    button {
+      cursor: pointer;
+      font-family: var(--font-body);
+      border: none;
+      background: none;
+    }
+
+    /* =====================================================================
+       LAYOUT WRAPPER
+    ===================================================================== */
+    .page-wrap {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 16px;
+    }
+
+    /* =====================================================================
+       HEADER
+    ===================================================================== */
+    .site-header {
+      background: var(--bg-header);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+      box-shadow: var(--shadow-md);
+    }
+
+    .header-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 16px;
+      height: 60px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .brand-icon {
+      font-size: 1.5rem;
+      line-height: 1;
+    }
+
+    .brand-title {
+      font-size: 1.125rem;
+      font-weight: 700;
+      color: var(--text-on-dark);
+      letter-spacing: -0.02em;
+    }
+
+    .version-badge {
+      background: var(--color-primary);
+      color: #fff;
+      font-size: 0.7rem;
+      font-weight: 700;
+      padding: 2px 8px;
+      border-radius: var(--radius-full);
+      letter-spacing: 0.04em;
+      font-family: var(--font-mono);
+    }
+
+    .header-controls {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .btn-icon {
+      background: rgba(255,255,255,0.08);
+      color: var(--text-on-dark);
+      border-radius: var(--radius-md);
+      padding: 6px 12px;
+      font-size: 0.875rem;
+      font-weight: 500;
+      transition: background var(--transition-fast);
+      border: 1px solid rgba(255,255,255,0.1);
+    }
+
+    .btn-icon:hover { background: rgba(255,255,255,0.15); }
+
+    #themeToggle { font-size: 1.1rem; padding: 6px 10px; }
+
+    #resetProgress {
+      font-size: 0.8rem;
+      color: rgba(255,255,255,0.6);
+    }
+    #resetProgress:hover { color: #ef4444; background: rgba(239,68,68,0.12); }
+
+    /* =====================================================================
+       PROGRESS DASHBOARD
+    ===================================================================== */
+    .progress-dashboard {
+      max-width: 1200px;
+      margin: 24px auto 0;
+      padding: 0 16px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+
+    .progress-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 20px 24px;
+      box-shadow: var(--shadow-sm);
+      transition: background var(--transition-base), border-color var(--transition-base);
+    }
+
+    .progress-label {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      margin-bottom: 10px;
+      font-size: 0.875rem;
+      font-weight: 600;
+      color: var(--text-secondary);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+
+    .progress-count {
+      font-family: var(--font-mono);
+      font-size: 0.9rem;
+      color: var(--text-primary);
+      font-weight: 700;
+    }
+
+    .progress-track {
+      background: var(--progress-track);
+      border-radius: var(--radius-full);
+      height: 10px;
+      overflow: hidden;
+    }
+
+    .progress-fill {
+      height: 100%;
+      border-radius: var(--radius-full);
+      background: linear-gradient(90deg, #f97316, #fb923c);
+      width: 0%;
+      transition: width var(--transition-slow);
+    }
+
+    .progress-fill--challenge {
+      background: linear-gradient(90deg, #3b82f6, #60a5fa);
+    }
+
+    .congrats-banner {
+      grid-column: 1 / -1;
+      background: linear-gradient(135deg, #f97316, #a855f7);
+      color: #fff;
+      border-radius: var(--radius-lg);
+      padding: 16px 24px;
+      text-align: center;
+      font-weight: 600;
+      font-size: 1rem;
+      letter-spacing: 0.01em;
+    }
+
+    /* =====================================================================
+       LEVEL NAV
+    ===================================================================== */
+    .level-nav {
+      max-width: 1200px;
+      margin: 24px auto 0;
+      padding: 0 16px;
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .level-btn {
+      padding: 8px 18px;
+      border-radius: var(--radius-full);
+      font-size: 0.875rem;
+      font-weight: 600;
+      border: 2px solid var(--border);
+      color: var(--text-secondary);
+      background: var(--bg-card);
+      transition: all var(--transition-fast);
+    }
+
+    .level-btn:hover {
+      border-color: var(--color-primary);
+      color: var(--color-primary);
+    }
+
+    .level-btn.active {
+      background: var(--color-primary);
+      border-color: var(--color-primary);
+      color: #fff;
+    }
+
+    .level-btn[data-level="beginner"].active    { background: var(--level-beginner);      border-color: var(--level-beginner); }
+    .level-btn[data-level="intermediate"].active { background: var(--level-intermediate); border-color: var(--level-intermediate); }
+    .level-btn[data-level="advanced"].active    { background: var(--level-advanced);      border-color: var(--level-advanced); }
+    .level-btn[data-level="expert"].active      { background: var(--level-expert);        border-color: var(--level-expert); }
+
+    /* =====================================================================
+       LEARNING PATH — SECTIONS
+    ===================================================================== */
+    #learningPath {
+      max-width: 1200px;
+      margin: 24px auto 48px;
+      padding: 0 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 40px;
+    }
+
+    .level-section {
+      background: var(--bg-level-section);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-xl);
+      padding: 28px;
+      transition: background var(--transition-base);
+    }
+
+    .level-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 24px;
+      flex-wrap: wrap;
+    }
+
+    .level-pill {
+      padding: 4px 12px;
+      border-radius: var(--radius-full);
+      font-size: 0.75rem;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: #fff;
+    }
+
+    .level-pill--beginner    { background: var(--level-beginner); }
+    .level-pill--intermediate { background: var(--level-intermediate); }
+    .level-pill--advanced    { background: var(--level-advanced); }
+    .level-pill--expert      { background: var(--level-expert); }
+
+    .level-title {
+      font-size: 1.375rem;
+      font-weight: 700;
+      color: var(--text-primary);
+      letter-spacing: -0.02em;
+    }
+
+    .level-subtitle {
+      font-size: 0.875rem;
+      color: var(--text-muted);
+      margin-left: auto;
+    }
+
+    /* =====================================================================
+       LESSONS GRID
+    ===================================================================== */
+    .lessons-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
+      gap: 16px;
+      margin-bottom: 20px;
+    }
+
+    /* =====================================================================
+       LESSON CARD
+    ===================================================================== */
+    .lesson-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 20px;
+      cursor: pointer;
+      position: relative;
+      transition: transform var(--transition-fast), box-shadow var(--transition-fast), background var(--transition-base), border-color var(--transition-base);
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      border-left: 4px solid transparent;
+    }
+
+    .lesson-card:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-lg);
+      background: var(--bg-card-hover);
+    }
+
+    .lesson-card[data-status="complete"] {
+      border-left-color: var(--status-complete);
+    }
+
+    .lesson-card[data-status="in-progress"] {
+      border-left-color: var(--status-progress);
+    }
+
+    .lesson-card[data-status="locked"] {
+      opacity: 0.72;
+    }
+
+    .card-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .card-num {
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      font-weight: 500;
+    }
+
+    .card-status-icon {
+      font-size: 1rem;
+      line-height: 1;
+    }
+
+    .card-title {
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--text-primary);
+      line-height: 1.3;
+    }
+
+    .card-desc {
+      font-size: 0.875rem;
+      color: var(--text-secondary);
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+      line-height: 1.5;
+      flex: 1;
+    }
+
+    .card-meta {
+      display: flex;
+      gap: 8px;
+      margin-top: 4px;
+    }
+
+    .card-badge {
+      font-size: 0.7rem;
+      font-weight: 600;
+      padding: 2px 8px;
+      border-radius: var(--radius-full);
+      background: var(--bg-level-section);
+      color: var(--text-muted);
+      border: 1px solid var(--border);
+    }
+
+    /* =====================================================================
+       CHALLENGE CARD
+    ===================================================================== */
+    .challenge-cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+      gap: 16px;
+    }
+
+    .challenge-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 24px;
+      border-top: 3px solid;
+      transition: background var(--transition-base), border-color var(--transition-base);
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .challenge-card--beginner    { border-top-color: var(--level-beginner); }
+    .challenge-card--intermediate { border-top-color: var(--level-intermediate); }
+    .challenge-card--advanced    { border-top-color: var(--level-advanced); }
+    .challenge-card--expert      { border-top-color: var(--level-expert); }
+
+    .challenge-card-header {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+    }
+
+    .challenge-icon {
+      font-size: 1.5rem;
+      line-height: 1;
+      flex-shrink: 0;
+    }
+
+    .challenge-type-label {
+      font-size: 0.7rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--text-muted);
+      margin-bottom: 2px;
+    }
+
+    .challenge-title {
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--text-primary);
+      line-height: 1.3;
+    }
+
+    .challenge-desc {
+      font-size: 0.875rem;
+      color: var(--text-secondary);
+      line-height: 1.55;
+    }
+
+    .challenge-requirements {
+      font-size: 0.875rem;
+      color: var(--text-secondary);
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .challenge-req-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+      cursor: pointer;
+      line-height: 1.4;
+    }
+
+    .req-checkbox {
+      width: 16px;
+      height: 16px;
+      border: 2px solid var(--border);
+      border-radius: var(--radius-sm);
+      flex-shrink: 0;
+      margin-top: 2px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.65rem;
+      transition: all var(--transition-fast);
+    }
+
+    .req-checkbox.checked {
+      background: var(--status-complete);
+      border-color: var(--status-complete);
+      color: #fff;
+    }
+
+    .challenge-card-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-top: 4px;
+      flex-wrap: wrap;
+    }
+
+    .challenge-status {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      font-weight: 500;
+    }
+
+    .challenge-status.done {
+      color: var(--status-complete);
+      font-weight: 700;
+    }
+
+    .btn-challenge-complete {
+      padding: 8px 18px;
+      border-radius: var(--radius-md);
+      font-size: 0.875rem;
+      font-weight: 600;
+      background: var(--color-primary);
+      color: #fff;
+      transition: all var(--transition-fast);
+      border: 2px solid transparent;
+    }
+
+    .btn-challenge-complete:hover {
+      background: var(--color-primary-hover);
+      transform: translateY(-1px);
+    }
+
+    .btn-challenge-complete.completed {
+      background: transparent;
+      border-color: var(--status-complete);
+      color: var(--status-complete);
+      cursor: default;
+    }
+
+    .btn-challenge-complete.completed:hover {
+      transform: none;
+    }
+
+    /* =====================================================================
+       MODAL
+    ===================================================================== */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: var(--bg-overlay);
+      z-index: 200;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+      backdrop-filter: blur(4px);
+      animation: overlayIn var(--transition-base) ease;
+    }
+
+    @keyframes overlayIn {
+      from { opacity: 0; }
+      to   { opacity: 1; }
+    }
+
+    .modal-overlay[hidden] { display: none; }
+
+    .modal {
+      background: var(--bg-modal);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-xl);
+      max-width: 680px;
+      width: 100%;
+      max-height: 88vh;
+      overflow-y: auto;
+      box-shadow: var(--shadow-modal);
+      animation: modalIn var(--transition-base) ease;
+      transition: background var(--transition-base);
+    }
+
+    @keyframes modalIn {
+      from { transform: translateY(16px); opacity: 0; }
+      to   { transform: translateY(0);    opacity: 1; }
+    }
+
+    .modal-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 20px 24px 0;
+    }
+
+    .modal-meta {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .modal-level-pill {
+      font-size: 0.7rem;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      padding: 3px 10px;
+      border-radius: var(--radius-full);
+      color: #fff;
+    }
+
+    .modal-lesson-num {
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      color: var(--text-muted);
+    }
+
+    .modal-close {
+      width: 32px;
+      height: 32px;
+      border-radius: var(--radius-md);
+      font-size: 1rem;
+      color: var(--text-muted);
+      background: var(--bg-level-section);
+      border: 1px solid var(--border);
+      transition: all var(--transition-fast);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .modal-close:hover {
+      background: #ef4444;
+      color: #fff;
+      border-color: #ef4444;
+    }
+
+    .modal-title {
+      padding: 16px 24px 0;
+      font-size: 1.375rem;
+      font-weight: 700;
+      color: var(--text-primary);
+      line-height: 1.25;
+      letter-spacing: -0.02em;
+    }
+
+    .modal-description {
+      padding: 10px 24px 0;
+      font-size: 0.9375rem;
+      color: var(--text-secondary);
+      line-height: 1.65;
+    }
+
+    .modal-section {
+      padding: 20px 24px 0;
+    }
+
+    .modal-section h3 {
+      font-size: 0.8rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--text-muted);
+      margin-bottom: 12px;
+    }
+
+    .modal-section ul,
+    .modal-section ol {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .modal-section li {
+      font-size: 0.9rem;
+      color: var(--text-secondary);
+      line-height: 1.55;
+    }
+
+    .resource-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 12px;
+      background: var(--bg-level-section);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      font-size: 0.875rem;
+      font-weight: 500;
+      color: var(--color-primary);
+      text-decoration: none;
+      transition: all var(--transition-fast);
+    }
+
+    .resource-link:hover {
+      background: var(--color-primary-dim);
+      border-color: var(--color-primary);
+      text-decoration: none;
+    }
+
+    .resources-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      padding-left: 0 !important;
+      list-style: none !important;
+    }
+
+    .modal-footer {
+      padding: 20px 24px 24px;
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      flex-wrap: wrap;
+      border-top: 1px solid var(--border);
+      margin-top: 24px;
+    }
+
+    .btn-complete {
+      padding: 10px 20px;
+      border-radius: var(--radius-md);
+      font-size: 0.875rem;
+      font-weight: 700;
+      background: var(--color-primary);
+      color: #fff;
+      transition: all var(--transition-fast);
+      margin-right: auto;
+    }
+
+    .btn-complete:hover { background: var(--color-primary-hover); }
+
+    .btn-complete.completed {
+      background: transparent;
+      border: 2px solid var(--status-complete);
+      color: var(--status-complete);
+    }
+
+    .btn-complete.completed:hover { background: rgba(34,197,94,0.1); }
+
+    .btn-nav {
+      padding: 10px 16px;
+      border-radius: var(--radius-md);
+      font-size: 0.875rem;
+      font-weight: 600;
+      border: 2px solid var(--border);
+      color: var(--text-secondary);
+      background: var(--bg-card);
+      transition: all var(--transition-fast);
+    }
+
+    .btn-nav:hover:not(:disabled) {
+      border-color: var(--color-primary);
+      color: var(--color-primary);
+    }
+
+    .btn-nav:disabled {
+      opacity: 0.3;
+      cursor: not-allowed;
+    }
+
+    /* =====================================================================
+       TOAST
+    ===================================================================== */
+    .toast {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      z-index: 300;
+      background: var(--bg-header);
+      color: var(--text-on-dark);
+      padding: 12px 20px;
+      border-radius: var(--radius-lg);
+      font-size: 0.875rem;
+      font-weight: 600;
+      box-shadow: var(--shadow-lg);
+      border: 1px solid rgba(255,255,255,0.1);
+      transform: translateY(80px);
+      opacity: 0;
+      transition: transform var(--transition-base), opacity var(--transition-base);
+      pointer-events: none;
+      max-width: 320px;
+    }
+
+    .toast.toast--visible {
+      transform: translateY(0);
+      opacity: 1;
+    }
+
+    /* =====================================================================
+       EMPTY STATE
+    ===================================================================== */
+    .empty-state {
+      text-align: center;
+      padding: 48px 24px;
+      color: var(--text-muted);
+      font-size: 0.9rem;
+    }
+
+    /* =====================================================================
+       RESPONSIVE
+    ===================================================================== */
+    @media (max-width: 768px) {
+      .progress-dashboard { grid-template-columns: 1fr 1fr; }
+      .lessons-grid { grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); }
+      .challenge-cards { grid-template-columns: 1fr; }
+      .modal { max-height: 92vh; border-radius: var(--radius-lg) var(--radius-lg) 0 0; align-self: flex-end; margin-top: auto; }
+      .modal-overlay { align-items: flex-end; padding: 0; }
+      .level-subtitle { display: none; }
+      .brand-title { font-size: 1rem; }
+    }
+
+    @media (max-width: 560px) {
+      .progress-dashboard { grid-template-columns: 1fr; }
+      .header-inner { height: 52px; }
+      .brand-title { display: none; }
+      .lessons-grid { grid-template-columns: 1fr; }
+      .level-section { padding: 20px 16px; }
+    }
+
+    @media print {
+      .site-header, .level-nav, .modal-overlay, .toast, #resetProgress, #themeToggle { display: none !important; }
+      .lessons-grid { grid-template-columns: 1fr 1fr; }
+      .lesson-card { break-inside: avoid; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- HEADER -->
+  <header class="site-header">
+    <div class="header-inner">
+      <div class="brand">
+        <span class="brand-icon">⚙</span>
+        <h1 class="brand-title">FreeCAD Learning Path</h1>
+        <span class="version-badge">v1.1+</span>
+      </div>
+      <div class="header-controls">
+        <button id="themeToggle" class="btn-icon" aria-label="Toggle theme">🌙</button>
+        <button id="resetProgress" class="btn-icon" aria-label="Reset all progress">Reset Progress</button>
+      </div>
+    </div>
+  </header>
+
+  <!-- PROGRESS DASHBOARD -->
+  <section class="progress-dashboard" aria-label="Your learning progress">
+    <div class="progress-card">
+      <div class="progress-label">
+        <span>Lessons Completed</span>
+        <span class="progress-count" id="lessonProgressText">0 / 20</span>
+      </div>
+      <div class="progress-track" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" id="lessonProgressTrack">
+        <div class="progress-fill" id="lessonProgressBar"></div>
+      </div>
+    </div>
+    <div class="progress-card">
+      <div class="progress-label">
+        <span>Challenges Completed</span>
+        <span class="progress-count" id="challengeProgressText">0 / 8</span>
+      </div>
+      <div class="progress-track" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" id="challengeProgressTrack">
+        <div class="progress-fill progress-fill--challenge" id="challengeProgressBar"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- LEVEL FILTER NAV -->
+  <nav class="level-nav" aria-label="Filter lessons by level">
+    <button class="level-btn active" data-level="all">All Levels</button>
+    <button class="level-btn" data-level="beginner">Beginner</button>
+    <button class="level-btn" data-level="intermediate">Intermediate</button>
+    <button class="level-btn" data-level="advanced">Advanced</button>
+    <button class="level-btn" data-level="expert">Expert</button>
+  </nav>
+
+  <!-- LEARNING PATH -->
+  <main id="learningPath" aria-label="Learning path content"></main>
+
+  <!-- LESSON MODAL -->
+  <div class="modal-overlay" id="modalOverlay" role="dialog" aria-modal="true" aria-labelledby="modalTitle" hidden>
+    <div class="modal" id="modal">
+      <div class="modal-header">
+        <div class="modal-meta">
+          <span class="modal-level-pill" id="modalLevelPill"></span>
+          <span class="modal-lesson-num" id="modalLessonNum"></span>
+        </div>
+        <button class="modal-close" id="modalClose" aria-label="Close lesson">✕</button>
+      </div>
+      <h2 class="modal-title" id="modalTitle"></h2>
+      <p class="modal-description" id="modalDescription"></p>
+      <div class="modal-section">
+        <h3>What You'll Learn</h3>
+        <ul id="modalObjectives"></ul>
+      </div>
+      <div class="modal-section">
+        <h3>Resources</h3>
+        <ul class="resources-list" id="modalResources"></ul>
+      </div>
+      <div class="modal-section">
+        <h3>Exercises</h3>
+        <ol id="modalExercises"></ol>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-complete" id="modalCompleteBtn">Mark as Complete</button>
+        <button class="btn-nav" id="modalPrevBtn" aria-label="Previous lesson">← Previous</button>
+        <button class="btn-nav" id="modalNextBtn" aria-label="Next lesson">Next →</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- TOAST -->
+  <div class="toast" id="toast" aria-live="polite" aria-atomic="true"></div>
+
+  <script>
+    /* =====================================================================
+       DATA — All content lives here
+    ===================================================================== */
+    const DATA = {
+      levels: [
+        {
+          id: "beginner",
+          title: "Beginner",
+          subtitle: "Getting Started with FreeCAD",
+          color: "#22c55e",
+          lessons: [
+            {
+              id: "b1", levelId: "beginner", num: 1,
+              title: "What is FreeCAD & Installation",
+              description: "Learn what FreeCAD is, where it fits in the CAD landscape, and how to install version 1.1+ on your operating system.",
+              objectives: [
+                "Understand what parametric, history-based CAD means",
+                "Learn why FreeCAD is a powerful open-source alternative",
+                "Install FreeCAD 1.1+ on Windows, macOS, or Linux",
+                "Launch FreeCAD and identify the Start workbench"
+              ],
+              resources: [
+                { label: "FreeCAD Official Website", url: "https://www.freecad.org/" },
+                { label: "About FreeCAD — Wiki", url: "https://wiki.freecad.org/About_FreeCAD" },
+                { label: "Installing on Windows — Wiki", url: "https://wiki.freecad.org/Installing_on_Windows" },
+                { label: "Installing on Linux — Wiki", url: "https://wiki.freecad.org/Installing_on_Linux" },
+                { label: "FreeCAD 1.0 Release Notes — Wiki", url: "https://wiki.freecad.org/Release_notes_1.0" }
+              ],
+              exercises: [
+                "Download and install FreeCAD 1.1+ from freecad.org/downloads",
+                "Open FreeCAD and take note of the default Start workbench layout",
+                "Click the workbench dropdown in the toolbar and browse through the list of available workbenches",
+                "Switch to the Part Design workbench — notice how the toolbar and menus change",
+                "Create a new empty document: File → New"
+              ]
+            },
+            {
+              id: "b2", levelId: "beginner", num: 2,
+              title: "The FreeCAD Interface",
+              description: "Master the FreeCAD UI: the Model tree (Combo View), 3D viewport, Task panel, status bar, and the workbench system.",
+              objectives: [
+                "Identify each panel in the 3-panel default layout",
+                "Understand the difference between the Model tab and Tasks tab in the Combo View",
+                "Switch between workbenches and understand what changes",
+                "Read the status bar for context-sensitive hints",
+                "Customize basic UI preferences"
+              ],
+              resources: [
+                { label: "Interface Overview — Wiki", url: "https://wiki.freecad.org/Interface" },
+                { label: "Workbenches — Wiki", url: "https://wiki.freecad.org/Workbenches" },
+                { label: "Combo View — Wiki", url: "https://wiki.freecad.org/Combo_view" },
+                { label: "3D View — Wiki", url: "https://wiki.freecad.org/3D_view" }
+              ],
+              exercises: [
+                "Identify the Combo View (left panel), 3D View (center), and Property View (lower left)",
+                "Open a new document, switch to Part Design workbench, then back to Part workbench — observe toolbar changes",
+                "Right-click the toolbar area to toggle different toolbars on/off",
+                "Open Preferences (Edit → Preferences) and explore the General and Display sections",
+                "Reset the interface to default: View → Standard Views → Home"
+              ]
+            },
+            {
+              id: "b3", levelId: "beginner", num: 3,
+              title: "Navigating the 3D View",
+              description: "Learn mouse navigation, the Navigation Cube, standard views, and keyboard shortcuts for moving around your 3D model.",
+              objectives: [
+                "Rotate, pan, and zoom using the mouse",
+                "Use numpad keys 1–9 for standard orthographic views",
+                "Use the Navigation Cube to orient the view",
+                "Change the navigation style to suit your preference (CAD, Blender, etc.)",
+                "Fit the view to selected objects"
+              ],
+              resources: [
+                { label: "Mouse Navigation — Wiki", url: "https://wiki.freecad.org/Mouse_navigation" },
+                { label: "Navigation Cube — Wiki", url: "https://wiki.freecad.org/Navigation_Cube" },
+                { label: "Standard Views — Wiki", url: "https://wiki.freecad.org/Std_View_Menu" }
+              ],
+              exercises: [
+                "Create a simple Part Box (Part workbench → Part menu → Box) as a navigation target",
+                "Practice: middle-mouse-button rotate, middle-mouse pan, scroll to zoom",
+                "Press numpad 1, 3, 7 to switch between Front, Right, and Top views",
+                "Press numpad 0 for perspective view, V then O for orthographic",
+                "Change navigation style: Edit → Preferences → Display → Navigation → Navigation style → try 'Blender', then switch back to 'CAD'",
+                "Press V then F (or numpad .) to fit the selected object to the viewport"
+              ]
+            },
+            {
+              id: "b4", levelId: "beginner", num: 4,
+              title: "Part Design Basics & Your First Sketch",
+              description: "Create a Body in Part Design, enter the Sketcher workbench, and draw a fully constrained sketch using lines, arcs, and dimensional constraints.",
+              objectives: [
+                "Create a new Body in Part Design — the container for all features",
+                "Attach a Sketch to a reference plane (XY, XZ, YZ)",
+                "Draw a closed profile using the Line and Arc tools",
+                "Apply geometric constraints (Horizontal, Vertical, Coincident, Equal)",
+                "Apply dimensional constraints (Fix Distance, Fix Radius)",
+                "Understand 'fully constrained' (green) vs. under-constrained (white/yellow)"
+              ],
+              resources: [
+                { label: "Part Design Workbench — Wiki", url: "https://wiki.freecad.org/PartDesign_Workbench" },
+                { label: "Sketcher Workbench — Wiki", url: "https://wiki.freecad.org/Sketcher_Workbench" },
+                { label: "PartDesign Body — Wiki", url: "https://wiki.freecad.org/PartDesign_Body" },
+                { label: "Basic Sketcher Tutorial — Wiki", url: "https://wiki.freecad.org/Basic_Sketcher_Tutorial" }
+              ],
+              exercises: [
+                "Switch to Part Design workbench; create a new Body via Part Design → Body",
+                "Click 'Create Sketch' and select the XY_Plane",
+                "Draw a rectangle using Sketcher → Rectangle (or the R shortcut) — any size",
+                "Apply Sketch → Constrain horizontal distance: set width to 80 mm",
+                "Apply Sketch → Constrain vertical distance: set height to 50 mm",
+                "Apply Sketch → Fix point to fix the bottom-left corner to the origin (x=0, y=0)",
+                "Verify all lines turn green (fully constrained), then close the Sketcher"
+              ]
+            },
+            {
+              id: "b5", levelId: "beginner", num: 5,
+              title: "First 3D Feature — Pad and Pocket",
+              description: "Convert your sketch into a 3D solid using Pad, then cut into it with a Pocket. These two operations are the core of Part Design modelling.",
+              objectives: [
+                "Pad a sketch to a specified depth to create a solid",
+                "Use Symmetric padding to center the extrusion",
+                "Create a second sketch on an existing face",
+                "Apply a Pocket (cut) through part of the solid",
+                "Examine and understand the Feature Tree"
+              ],
+              resources: [
+                { label: "PartDesign Pad — Wiki", url: "https://wiki.freecad.org/PartDesign_Pad" },
+                { label: "PartDesign Pocket — Wiki", url: "https://wiki.freecad.org/PartDesign_Pocket" },
+                { label: "Basic Part Design Tutorial — Wiki", url: "https://wiki.freecad.org/Basic_Part_Design_Tutorial_019" }
+              ],
+              exercises: [
+                "Select the 80×50mm sketch in the Model tree and click Part Design → Pad",
+                "Set the depth to 20 mm and click OK — you should see a rectangular block",
+                "Click on the top face of the block to select it",
+                "Create a new Sketch on this face; draw a circle with diameter 30 mm centered on the face",
+                "Close the Sketcher, select the circle sketch, and click Part Design → Pocket",
+                "Set depth to 10 mm; experiment with changing it to 'Through All'",
+                "In the Model tree, right-click features to rename them (e.g. 'BasePad', 'HolePocket')"
+              ]
+            }
+          ],
+          challenges: [
+            {
+              id: "bc1",
+              type: "Mini Challenge",
+              title: "Sketch Accuracy Challenge",
+              description: "Draw an L-shaped profile with exact dimensions and make it fully constrained. This challenge tests your ability to apply constraints systematically.",
+              requirements: [
+                "L-shape outer dimensions: 100 mm wide × 60 mm tall",
+                "Inner cutout (the 'notch'): 60 mm wide × 30 mm tall, in the top-right corner",
+                "All 6 lines of the L-shape drawn and connected",
+                "All required dimensional constraints applied",
+                "Sketch is fully constrained — all lines turn green",
+                "Sketch can be closed and re-opened without errors or yellow warnings"
+              ],
+              hints: [
+                "Use the 'Fix Point' constraint on the origin to anchor the sketch",
+                "Draw all 6 lines first, then apply constraints — don't mix drawing and constraining",
+                "Count your degrees of freedom: 6 lines × 2 endpoints = many DOF, but each shared endpoint and constraint removes DOF",
+                "The Sketcher status bar shows remaining DOF — aim for 0"
+              ],
+              resources: [
+                { label: "Sketcher Constraints — Wiki", url: "https://wiki.freecad.org/Sketcher_Workbench#Sketcher_constraints" }
+              ]
+            },
+            {
+              id: "bc2",
+              type: "Capstone Challenge",
+              title: "Model a Simple Wall-Mount Bracket",
+              description: "Model a wall-mount bracket from the specification below. This is your first complete, multi-feature Part Design model.",
+              requirements: [
+                "Base plate: 80 mm × 60 mm × 8 mm, padded from XY plane",
+                "Vertical flange: 60 mm wide × 50 mm tall × 8 mm thick, padded from the back face of the base plate",
+                "Four mounting holes: Ø6 mm through-holes, one at each corner of the base plate (10 mm from each edge)",
+                "Inside corner fillet: R3 mm applied to the inner edge where base meets flange",
+                "File saved as bracket.FCStd",
+                "Model has no errors in the Feature Tree (no yellow warning icons)"
+              ],
+              hints: [
+                "Model the base plate first, then the vertical flange as a second Pad on the back face",
+                "Use a construction geometry rectangle for the hole centerlines to ensure symmetric placement",
+                "The Fillet tool is in the Part Design menu under 'Dress-Up' features",
+                "If the fillet fails, try a smaller radius first (R1mm) to confirm the edge is selected correctly"
+              ],
+              resources: [
+                { label: "PartDesign Fillet — Wiki", url: "https://wiki.freecad.org/PartDesign_Fillet" },
+                { label: "PartDesign Hole — Wiki", url: "https://wiki.freecad.org/PartDesign_Hole" }
+              ]
+            }
+          ]
+        },
+        {
+          id: "intermediate",
+          title: "Intermediate",
+          subtitle: "Expanding Your Toolkit",
+          color: "#3b82f6",
+          lessons: [
+            {
+              id: "i1", levelId: "intermediate", num: 6,
+              title: "Advanced Sketching Techniques",
+              description: "Level up your Sketcher skills with symmetry constraints, construction geometry, external geometry references, and more efficient constraint workflows.",
+              objectives: [
+                "Use the Symmetry constraint to reduce constraint count by up to half",
+                "Toggle lines to Construction mode (dashed) for reference geometry",
+                "Use 'External Geometry' to reference edges from the 3D solid inside a sketch",
+                "Apply Point-On-Object, Equal, and Tangent constraints",
+                "Use sketch arrays and mirroring tools"
+              ],
+              resources: [
+                { label: "Sketcher ToggleConstruction — Wiki", url: "https://wiki.freecad.org/Sketcher_ToggleConstruction" },
+                { label: "Sketcher External — Wiki", url: "https://wiki.freecad.org/Sketcher_External" },
+                { label: "Sketcher Symmetry — Wiki", url: "https://wiki.freecad.org/Sketcher_Symmetry" },
+                { label: "All Sketcher Constraints — Wiki", url: "https://wiki.freecad.org/Sketcher_Workbench#Sketcher_constraints" }
+              ],
+              exercises: [
+                "Open the bracket sketch from the beginner challenge; re-draw the hole pattern using a construction circle as a bolt-circle reference",
+                "Apply a Symmetry constraint across the vertical center axis to constrain both sides with one constraint",
+                "Use External Geometry to reference the outer edge of the solid inside a sketch on the top face",
+                "Create a slot sketch (two semicircles + two lines) using only 4 constraints by exploiting Equal and Symmetric",
+                "Use Sketcher → Tools → Create Carbon Copy to copy an existing sketch into a new one"
+              ]
+            },
+            {
+              id: "i2", levelId: "intermediate", num: 7,
+              title: "Revolution, Loft, and Sweep",
+              description: "Create rotationally symmetric parts with Revolution, complex shape transitions with Loft, and profiles swept along a path with SubShapeBinder/Sweep.",
+              objectives: [
+                "Sketch a half-profile and revolve it 360° (and partial angles)",
+                "Create a Loft between two sketches on parallel planes",
+                "Sweep a profile along a 3D spine path",
+                "Understand when to use each tool vs. Pad"
+              ],
+              resources: [
+                { label: "PartDesign Revolution — Wiki", url: "https://wiki.freecad.org/PartDesign_Revolution" },
+                { label: "PartDesign Additive Loft — Wiki", url: "https://wiki.freecad.org/PartDesign_AdditiveLoft" },
+                { label: "PartDesign Additive Pipe (Sweep) — Wiki", url: "https://wiki.freecad.org/PartDesign_AdditivePipe" }
+              ],
+              exercises: [
+                "Sketch a stepped profile on the YZ plane (a T-shape or stepped shaft profile) and revolve it 360° to create a turned part",
+                "Create a new Body; add two parallel sketches separated by 40 mm (one circle Ø30 mm, one square 30×30 mm); Loft between them",
+                "Model a pipe elbow: create a sketch for the pipe cross-section (circle) and a spine path (a 90° arc); use Additive Pipe",
+                "Experiment with the Revolution 'Angle' parameter — try 180° and 270° revolutions"
+              ]
+            },
+            {
+              id: "i3", levelId: "intermediate", num: 8,
+              title: "Assembly Workbench (Built-in)",
+              description: "Use FreeCAD 1.0+'s built-in Assembly workbench to combine multiple parts using joints. This replaces the need for third-party assembly addons.",
+              objectives: [
+                "Create a new Assembly document",
+                "Insert and position component parts as links",
+                "Apply Fixed, Revolute, Slider, and Ball joints",
+                "Run the assembly solver and resolve constraint conflicts",
+                "Understand the difference between 'Insert Link' and direct insertion"
+              ],
+              resources: [
+                { label: "Assembly Workbench — Wiki", url: "https://wiki.freecad.org/Assembly_Workbench" },
+                { label: "Assembly Joints — Wiki", url: "https://wiki.freecad.org/Assembly_Joints" },
+                { label: "Release Notes 1.0 — Assembly", url: "https://wiki.freecad.org/Release_notes_1.0#Assembly" }
+              ],
+              exercises: [
+                "Create two simple part files: a cylindrical pin (Ø5 mm × 20 mm) and a block with a Ø5.1 mm hole",
+                "Create a new Assembly document; insert both parts as links",
+                "Apply a Fixed joint to the block to anchor it",
+                "Apply a Revolute joint between the pin's cylindrical face and the hole — verify the pin can rotate",
+                "Add a third part and connect it with a Slider joint; verify the assembly solver runs without errors"
+              ]
+            },
+            {
+              id: "i4", levelId: "intermediate", num: 9,
+              title: "Technical Drawing with TechDraw",
+              description: "Generate professional 2D engineering drawings from your 3D models using the TechDraw workbench — complete with views, dimensions, and annotations.",
+              objectives: [
+                "Create a drawing Page using a standard template (A4, A3)",
+                "Insert Front, Top, and Side projected views",
+                "Add a Section view with a custom cutting plane",
+                "Add dimensions (linear, radial, angular) and annotations",
+                "Export the drawing as PDF and SVG"
+              ],
+              resources: [
+                { label: "TechDraw Workbench — Wiki", url: "https://wiki.freecad.org/TechDraw_Workbench" },
+                { label: "Basic TechDraw Tutorial — Wiki", url: "https://wiki.freecad.org/Basic_TechDraw_Tutorial" },
+                { label: "TechDraw Templates — Wiki", url: "https://wiki.freecad.org/TechDraw_Templates" }
+              ],
+              exercises: [
+                "Open the bracket model; switch to TechDraw workbench",
+                "Insert a new Page with an A4 template: TechDraw → New Default",
+                "Insert an orthographic view group (Front + Top + Right) at scale 1:1",
+                "Add a Section view through the center of the bracket showing the pocket depth",
+                "Dimension: overall width, height, hole diameter (Ø6), and pocket depth",
+                "Add a title block annotation with your name and date",
+                "Export as PDF: File → Export → PDF"
+              ]
+            },
+            {
+              id: "i5", levelId: "intermediate", num: 10,
+              title: "Spreadsheet-Driven Parametric Models",
+              description: "Drive all model dimensions from a Spreadsheet so that changing a single cell updates the entire geometry — the foundation of proper parametric design.",
+              objectives: [
+                "Insert a Spreadsheet into a Part Design document",
+                "Name cells with aliases (e.g. 'width', 'height')",
+                "Reference cell aliases in Sketcher dimension fields using expressions",
+                "Understand the FreeCAD expression engine syntax",
+                "Test the parametric model by changing values and watching it update"
+              ],
+              resources: [
+                { label: "Spreadsheet Workbench — Wiki", url: "https://wiki.freecad.org/Spreadsheet_Workbench" },
+                { label: "Expressions — Wiki", url: "https://wiki.freecad.org/Expressions" },
+                { label: "Spreadsheet Tutorial — Wiki", url: "https://wiki.freecad.org/Spreadsheet_tutorial" }
+              ],
+              exercises: [
+                "Open the bracket model; add a Spreadsheet (Spreadsheet → New Spreadsheet)",
+                "In the spreadsheet, create cells: A1=Width (label), B1=80; A2=Height, B2=60; A3=Thickness, B3=8; A4=HoleDiameter, B4=6",
+                "Right-click each B cell → Properties → set Alias to 'width', 'height', 'thickness', 'hole_d'",
+                "Edit the base pad sketch; click a dimension → in the input field type '=Spreadsheet.width'",
+                "Do the same for all other parametric dimensions",
+                "Test: change B1 from 80 to 120 — the entire model should update automatically"
+              ]
+            }
+          ],
+          challenges: [
+            {
+              id: "ic1",
+              type: "Mini Challenge",
+              title: "Parametric Turned Part",
+              description: "Model a cylindrical knob using Revolution, fully driven by a spreadsheet with 5 parameters. No hardcoded dimensions allowed.",
+              requirements: [
+                "Spreadsheet with 5 aliased cells: body_diameter, shaft_diameter, body_height, shaft_length, groove_depth",
+                "Revolution sketch uses only expressions referencing the spreadsheet",
+                "Changing body_diameter from 30 to 50 updates the model cleanly without errors",
+                "No underconstrained sketch elements (no yellow lines)",
+                "Groove/profile detail visible in the Revolution (at least 2 diameter steps)"
+              ],
+              hints: [
+                "Sketch only the right half-profile for revolution (everything to the right of the Y axis)",
+                "Use expressions like 'Spreadsheet.body_diameter / 2' in radius/diameter fields",
+                "Add a Fixed constraint on the axis point at the origin to fully constrain the half-profile"
+              ],
+              resources: [
+                { label: "Expressions Syntax — Wiki", url: "https://wiki.freecad.org/Expressions#Supported_syntax" }
+              ]
+            },
+            {
+              id: "ic2",
+              type: "Capstone Challenge",
+              title: "Parametric Snap-Fit Box with Lid",
+              description: "Model a two-part snap-fit box driven by a shared spreadsheet. Both the box body and lid update when parameters change.",
+              requirements: [
+                "Shared spreadsheet with: box_length, box_width, box_height, wall_thickness, snap_depth",
+                "Box body: hollow inside with wall_thickness walls, open top",
+                "Lid: fits over the box top with a 1 mm inset lip using snap_depth to control the snap feature",
+                "Both parts in the same .FCStd file referencing the same spreadsheet",
+                "Assembly showing box + lid mated (lid sitting on box)",
+                "TechDraw page with a section view showing the snap-fit detail",
+                "Changing box_length updates both box and lid without errors"
+              ],
+              hints: [
+                "Use PartDesign ShapeBinder to reference the box body geometry inside the lid sketch",
+                "Model the hollow inside with a Pocket using 'Through All' with offset for the wall thickness",
+                "The snap lip can be a small Pad on the inside perimeter of the lid"
+              ],
+              resources: [
+                { label: "PartDesign ShapeBinder — Wiki", url: "https://wiki.freecad.org/PartDesign_ShapeBinder" },
+                { label: "PartDesign SubShapeBinder — Wiki", url: "https://wiki.freecad.org/PartDesign_SubShapeBinder" }
+              ]
+            }
+          ]
+        },
+        {
+          id: "advanced",
+          title: "Advanced",
+          subtitle: "Power Tools & Analysis",
+          color: "#a855f7",
+          lessons: [
+            {
+              id: "a1", levelId: "advanced", num: 11,
+              title: "Part Workbench — Boolean Operations",
+              description: "The Part workbench works with raw shapes (not Bodies). Learn Boolean union, cut, and intersection plus shape primitives — essential for complex geometry.",
+              objectives: [
+                "Distinguish Part workbench from Part Design — when to use each",
+                "Create Part primitives: Box, Cylinder, Sphere, Cone, Torus",
+                "Apply Boolean Fuse (union), Cut, and Common (intersection)",
+                "Understand shape vs. solid topology",
+                "Use Part Section and Part Slice"
+              ],
+              resources: [
+                { label: "Part Workbench — Wiki", url: "https://wiki.freecad.org/Part_Workbench" },
+                { label: "Part Boolean Operations — Wiki", url: "https://wiki.freecad.org/Part_Boolean" },
+                { label: "Part Cut — Wiki", url: "https://wiki.freecad.org/Part_Cut" },
+                { label: "Part Fuse — Wiki", url: "https://wiki.freecad.org/Part_Fuse" }
+              ],
+              exercises: [
+                "Switch to Part workbench; create a Cylinder (Ø30 mm × 40 mm) and a Sphere (Ø35 mm) overlapping it",
+                "Select both → Part → Boolean → Fuse → inspect the result in the Model tree",
+                "Create a Box (40×40×40) and a smaller Cylinder (Ø20×50) passing through the center; Boolean Cut to hollow out the box",
+                "Create two overlapping Boxes and use Part → Common (Intersection) — observe that only the overlapping volume remains",
+                "Use Part → Section to slice a solid with a plane and export the resulting cross-section shape"
+              ]
+            },
+            {
+              id: "a2", levelId: "advanced", num: 12,
+              title: "FEM Basics — Finite Element Analysis",
+              description: "Perform a basic static structural analysis using the FEM workbench. Understand meshing, boundary conditions, loads, and interpreting Von Mises stress results.",
+              objectives: [
+                "Activate the FEM workbench and create an Analysis container",
+                "Assign a material (steel) to the solid",
+                "Generate a mesh using Gmsh at a specified element size",
+                "Apply Fixed Constraint (boundary condition) and Force Load",
+                "Run the CalculiX solver",
+                "Visualize and interpret Von Mises stress and displacement results"
+              ],
+              resources: [
+                { label: "FEM Workbench — Wiki", url: "https://wiki.freecad.org/FEM_Workbench" },
+                { label: "FEM Tutorial — Wiki", url: "https://wiki.freecad.org/FEM_tutorial" },
+                { label: "FEM Mesh from Shape (Gmsh) — Wiki", url: "https://wiki.freecad.org/FEM_MeshGmshFromShape" },
+                { label: "CalculiX Solver — Wiki", url: "https://wiki.freecad.org/FEM_SolverCalculixCxxtools" }
+              ],
+              exercises: [
+                "Open the bracket model; switch to FEM workbench; create New Analysis",
+                "Add material: FEM → Material → Solid → select CalculiX-Steel",
+                "Create mesh: FEM → Mesh → FEM Mesh from Shape by Gmsh, set max element size to 3 mm",
+                "Add Fixed Constraint to the two mounting hole faces (simulating bolted to wall)",
+                "Add Force Load on the horizontal ledge: 500 N in the -Z direction",
+                "Run solver: FEM → Solver CalculiX Standard → Run",
+                "View results: double-click 'CCX_Results', enable Von Mises Stress, note the location of maximum stress"
+              ]
+            },
+            {
+              id: "a3", levelId: "advanced", num: 13,
+              title: "Path/CAM Workbench",
+              description: "Generate CNC toolpaths from a 3D model using the CAM workbench. Go from 3D model to G-code ready for a CNC machine.",
+              objectives: [
+                "Create a CAM Job with stock material defined",
+                "Add a Profile (contour) operation with a specified end mill",
+                "Add a Pocket clearing operation",
+                "Simulate the toolpath in the 3D view",
+                "Post-process to G-code using a standard post-processor"
+              ],
+              resources: [
+                { label: "CAM Workbench — Wiki", url: "https://wiki.freecad.org/CAM_Workbench" },
+                { label: "CAM Walkthrough for the Impatient — Wiki", url: "https://wiki.freecad.org/CAM_Walkthrough_for_the_Impatient" },
+                { label: "CAM Job — Wiki", url: "https://wiki.freecad.org/CAM_Job" },
+                { label: "CAM Post Processor — Wiki", url: "https://wiki.freecad.org/CAM_Post" }
+              ],
+              exercises: [
+                "Open a simple flat-bottom part; switch to CAM workbench",
+                "Create a Job: CAM → Job → set stock to 5 mm above/around the part",
+                "Add a Tool Controller: 6 mm flat end mill, 3 flutes, RPM 18000",
+                "Add Profile operation: select the outer perimeter edge, depth to bottom of stock",
+                "Add Pocket operation: select the pocket floor, configure step-over at 40%",
+                "Run the path simulation: CAM → Path Simulator",
+                "Post-process: CAM → Post Process → select 'linuxcnc' → save .ngc file",
+                "Open the .ngc file in a text editor and identify G0, G1, F (feed) commands"
+              ]
+            },
+            {
+              id: "a4", levelId: "advanced", num: 14,
+              title: "Macros and Python Scripting Basics",
+              description: "Automate FreeCAD tasks using the built-in Python console and macro system. Record, edit, and run macros to eliminate repetitive work.",
+              objectives: [
+                "Use the Python console to create objects via script",
+                "Record a macro using the Macro recorder",
+                "Edit a macro in the built-in macro editor",
+                "Understand App.ActiveDocument and the FreeCAD document object model",
+                "Run a macro from the macro menu or on a toolbar button"
+              ],
+              resources: [
+                { label: "Macros — Wiki", url: "https://wiki.freecad.org/Macros" },
+                { label: "Python Scripting Tutorial — Wiki", url: "https://wiki.freecad.org/Python_scripting_tutorial" },
+                { label: "FreeCAD Scripting Basics — Wiki", url: "https://wiki.freecad.org/FreeCAD_Scripting_Basics" },
+                { label: "Scripted Objects — Wiki", url: "https://wiki.freecad.org/Scripted_objects" }
+              ],
+              exercises: [
+                "Open the Python console: View → Panels → Python Console",
+                "Type: import Part; Part.show(Part.makeBox(50,50,10)) — a box should appear",
+                "Record a macro: Macro → Record Macro, create a Pad feature, stop recording",
+                "Open the recorded macro (Macro → Macros → Edit) and add a comment explaining each line",
+                "Modify the macro to accept a 'thickness' variable and run it with 3 different values",
+                "Assign the macro to a custom toolbar button: Tools → Customize → Toolbars"
+              ]
+            },
+            {
+              id: "a5", levelId: "advanced", num: 15,
+              title: "Expressions and Formula-Driven Design",
+              description: "Go beyond spreadsheets — use FreeCAD's expression engine for trigonometric relationships, property cross-references, and conditional geometry.",
+              objectives: [
+                "Write expressions using math functions (sin, cos, sqrt, abs)",
+                "Reference properties of other features (e.g. 'Pad.Length * 0.5')",
+                "Use ternary expressions for conditional dimensions",
+                "Link properties across documents",
+                "Create a self-updating parametric model that enforces design rules"
+              ],
+              resources: [
+                { label: "Expressions — Wiki", url: "https://wiki.freecad.org/Expressions" },
+                { label: "Expression Syntax Reference — Wiki", url: "https://wiki.freecad.org/Expressions#Supported_syntax" }
+              ],
+              exercises: [
+                "Create a box where Pocket depth = 'Pad.Length * 0.4' (always 40% of the pad height)",
+                "Add an expression where a slot width = 'sqrt(Pad.Length^2 + Pad.Width^2) * 0.1' (diagonal-based rule)",
+                "Create a second sketch dimension that uses 'sin(45 * pi / 180) * 50' to compute an angled offset",
+                "Use a ternary: 'Spreadsheet.height > 50 ? 10 : 5' for a fillet radius that adapts to part height",
+                "Link a dimension in one document to a property in another: open the expression editor and navigate to 'Document.Feature.Property'"
+              ]
+            }
+          ],
+          challenges: [
+            {
+              id: "ac1",
+              type: "Mini Challenge",
+              title: "FEM Load Case Comparison",
+              description: "Run three FEM analyses on the bracket with different support configurations. Compare max Von Mises stress to determine which configuration is structurally strongest.",
+              requirements: [
+                "Three separate FEM analyses in the same file (duplicate the Analysis container)",
+                "Case 1: Fixed at the two vertical holes, 500N downward load on horizontal face",
+                "Case 2: Fixed at all four holes, same 500N load",
+                "Case 3: Fixed at both vertical holes + bottom edge, same 500N load",
+                "Each analysis run to completion with no solver errors",
+                "Max Von Mises stress and max displacement recorded for each case",
+                "Mesh element size ≤3 mm for all cases"
+              ],
+              hints: [
+                "Right-click the Analysis container in the Model tree → Duplicate to copy it",
+                "Change only the Fixed Constraint selections between cases",
+                "The FEM Results object shows max/min values in its properties panel"
+              ],
+              resources: [
+                { label: "FEM Analysis Container — Wiki", url: "https://wiki.freecad.org/FEM_Analysis" }
+              ]
+            },
+            {
+              id: "ac2",
+              type: "Capstone Challenge",
+              title: "Full Assembly with Drawing Package",
+              description: "Create a 3-part assembly and a complete engineering drawing package — the kind you'd hand to a manufacturer.",
+              requirements: [
+                "Three separate part files: base_plate.FCStd, vertical_post.FCStd, cross_arm.FCStd",
+                "Assembly file assembly.FCStd with all 3 parts, fully constrained (0 DOF remaining after applying joints)",
+                "Exploded view of the assembly created",
+                "TechDraw drawing package containing: title block on every sheet, 3 standard views + section view for each part, assembly overview view, Bill of Materials (BOM) table",
+                "All critical dimensions on the drawings (overall envelope, hole positions, key features)",
+                "Final PDF exported from TechDraw"
+              ],
+              hints: [
+                "Use TechDraw SpreadsheetView for the BOM — link it to a Spreadsheet listing parts",
+                "For the exploded view, temporarily offset part positions in the assembly and take a snapshot",
+                "Plan your drawing sheet layout before inserting views — use the Page Preview"
+              ],
+              resources: [
+                { label: "TechDraw SpreadsheetView — Wiki", url: "https://wiki.freecad.org/TechDraw_SpreadsheetView" },
+                { label: "TechDraw SectionView — Wiki", url: "https://wiki.freecad.org/TechDraw_SectionView" }
+              ]
+            }
+          ]
+        },
+        {
+          id: "expert",
+          title: "Expert",
+          subtitle: "Scripting, Automation & Contributing",
+          color: "#ef4444",
+          lessons: [
+            {
+              id: "e1", levelId: "expert", num: 16,
+              title: "Advanced Python Scripting & the FreeCAD API",
+              description: "Deep dive into the FreeCAD Python API. Create documents, features, and shapes entirely via script and understand the App/Gui separation.",
+              objectives: [
+                "Use App and Part modules to create geometry from script",
+                "Create shapes with Part.makeBox, Part.makeCylinder, Part.makeCompound",
+                "Position shapes using Base.Placement and Matrix operations",
+                "Understand the App.Document (data) vs Gui.Document (display) split",
+                "Write batch-processing scripts that operate on all parts in a directory"
+              ],
+              resources: [
+                { label: "FreeCAD API Reference", url: "https://freecad.github.io/SourceDoc/" },
+                { label: "Topological Data Scripting — Wiki", url: "https://wiki.freecad.org/Topological_data_scripting" },
+                { label: "Placement — Wiki", url: "https://wiki.freecad.org/Placement" },
+                { label: "Code Snippets — Wiki", url: "https://wiki.freecad.org/Code_snippets" }
+              ],
+              exercises: [
+                "Write a Python script that creates a bolt-hole pattern: N holes of diameter D arranged on a bolt circle of radius R (N, D, R as parameters)",
+                "Extend the script to use Part.makeCylinder and App.Base.Placement to position each hole",
+                "Write a batch script that opens every .FCStd in a folder and exports it as .STEP",
+                "Create a compound shape from a list of primitives using Part.makeCompound",
+                "Use FreeCAD.Vector and FreeCAD.Matrix to rotate a shape 45° around its center and place a copy"
+              ]
+            },
+            {
+              id: "e2", levelId: "expert", num: 17,
+              title: "Scripted Objects (FeaturePython)",
+              description: "Create custom parametric FreeCAD objects that behave like built-in features — with typed properties, auto-recompute on change, and a custom icon.",
+              objectives: [
+                "Create a FeaturePython class with an execute() method",
+                "Add typed properties using addProperty (length, integer, string, bool)",
+                "Implement a ViewProvider class for icon display",
+                "Understand the recompute cycle and when execute() is called",
+                "Save and reload a document containing a scripted object"
+              ],
+              resources: [
+                { label: "Scripted Objects — Wiki", url: "https://wiki.freecad.org/Scripted_objects" },
+                { label: "FeaturePython Objects — Wiki", url: "https://wiki.freecad.org/FeaturePython_Objects" },
+                { label: "Create a FeaturePython Box (Part I) — Wiki", url: "https://wiki.freecad.org/Create_a_FeaturePython_Box,_Part_I" },
+                { label: "ViewProvider — Wiki", url: "https://wiki.freecad.org/Viewprovider" }
+              ],
+              exercises: [
+                "Create a ParametricHexagon class: properties side_length (float), thickness (float), hole_diameter (float)",
+                "Implement execute() to build the hexagon profile using Part.makePolygon and Part.Face",
+                "Extrude the face by thickness using shape.extrude(FreeCAD.Vector(0,0,thickness))",
+                "Subtract the center hole using Part.makeCylinder and Boolean cut",
+                "Add a ViewProvider class returning a custom icon path (use any existing SVG from FreeCAD's resources)",
+                "Test: save the document, close FreeCAD, reopen — the object should recompute cleanly"
+              ]
+            },
+            {
+              id: "e3", levelId: "expert", num: 18,
+              title: "Custom Workbench Development",
+              description: "Package your tools into a proper FreeCAD workbench addon with menus, toolbars, and commands — ready for the Addon Manager.",
+              objectives: [
+                "Understand the FreeCAD Mod/ directory structure for addons",
+                "Create InitGui.py and Init.py entry points",
+                "Register a Workbench class with a custom icon and menu",
+                "Create a Gui.Command class with IsActive(), Activated(), and GetResources()",
+                "Package the addon correctly for the FreeCAD Addon Manager"
+              ],
+              resources: [
+                { label: "Workbench Creation — Wiki", url: "https://wiki.freecad.org/Workbench_creation" },
+                { label: "Gui Commands — Wiki", url: "https://wiki.freecad.org/Gui_Command" },
+                { label: "FreeCAD Addons on GitHub", url: "https://github.com/FreeCAD/FreeCAD-addons" }
+              ],
+              exercises: [
+                "Create folder: FreeCAD_data/Mod/MyTools/",
+                "Create Init.py with a print statement (loaded at FreeCAD start for both GUI and CLI modes)",
+                "Create InitGui.py: define a Workbench class, add it to Gui.addWorkbench",
+                "Define a command class 'CreateM3Nut': Activated() creates an M3 nut solid via Part scripting",
+                "Register the command with Gui.addCommand and add it to the workbench menu and toolbar",
+                "Test: restart FreeCAD, switch to MyTools workbench, run the command — M3 nut appears"
+              ]
+            },
+            {
+              id: "e4", levelId: "expert", num: 19,
+              title: "FreeCAD with Git & Version Control",
+              description: "Version control FreeCAD .FCStd files (which are ZIP archives) effectively using Git and companion export workflows.",
+              objectives: [
+                "Understand that .FCStd is a ZIP containing XML + thumbnails",
+                "Set up .gitattributes to handle .FCStd as binary (no line-ending mangling)",
+                "Establish a companion export workflow: commit .FCStd + .STEP/.STL sidecars",
+                "Write meaningful commit messages for CAD changes",
+                "Use Git branches for design variants"
+              ],
+              resources: [
+                { label: "FCStd File Format — Wiki", url: "https://wiki.freecad.org/File_Format_FCStd" },
+                { label: "FreeCAD Forum — Git discussion", url: "https://forum.freecad.org/viewtopic.php?t=18931" },
+                { label: "gitattributes Documentation", url: "https://git-scm.com/docs/gitattributes" }
+              ],
+              exercises: [
+                "Init a Git repo for your FreeCAD projects folder",
+                "Create .gitattributes with: *.FCStd binary  *.FCBak binary",
+                "Commit the bracket.FCStd file with message 'feat: add base bracket model (80x60x8mm base, 50mm flange)'",
+                "Make a design change (increase bracket width to 100mm), export a STEP file, commit both",
+                "Create a branch 'variant-thicker-flange', change flange to 12mm, commit",
+                "Merge the branch back to main — resolve any issues"
+              ]
+            },
+            {
+              id: "e5", levelId: "expert", num: 20,
+              title: "Contributing to FreeCAD",
+              description: "Understand FreeCAD's open-source structure, how to report bugs effectively, and how to contribute code, documentation, and translations.",
+              objectives: [
+                "Navigate the FreeCAD GitHub repository structure",
+                "Write a high-quality bug report following the issue template",
+                "Make a wiki edit (documentation improvement)",
+                "Understand the FreeCAD C++/Python codebase structure at a high level",
+                "Submit a documentation pull request on GitHub"
+              ],
+              resources: [
+                { label: "FreeCAD on GitHub", url: "https://github.com/FreeCAD/FreeCAD" },
+                { label: "CONTRIBUTING.md", url: "https://github.com/FreeCAD/FreeCAD/blob/main/CONTRIBUTING.md" },
+                { label: "Compile on Linux — Wiki", url: "https://wiki.freecad.org/Compile_on_Linux" },
+                { label: "FreeCAD Forum", url: "https://forum.freecad.org/" },
+                { label: "FreeCAD Wiki — Editing Guide", url: "https://wiki.freecad.org/Help:Editing" }
+              ],
+              exercises: [
+                "Browse github.com/FreeCAD/FreeCAD — explore src/Mod/ to understand how workbenches map to folders",
+                "Find an open 'good first issue' in the GitHub Issues tab — read the issue template requirements",
+                "Write a mock bug report in a local file following the template (OS, FreeCAD version, steps to reproduce, expected vs actual behavior, screenshots)",
+                "Find one outdated or incomplete page on wiki.freecad.org — note what's missing",
+                "Fork FreeCAD on GitHub; clone locally; find and fix a documentation comment in a Python file; push to your fork and open a draft PR"
+              ]
+            }
+          ],
+          challenges: [
+            {
+              id: "ec1",
+              type: "Mini Challenge",
+              title: "FeaturePython Involute Gear",
+              description: "Build a FeaturePython object that generates a simplified involute gear profile. Changing any property triggers an automatic clean recompute.",
+              requirements: [
+                "FeaturePython class with 3 properties: module (float), num_teeth (int), pressure_angle (float)",
+                "execute() builds the gear tooth profile using FreeCAD Part geometry (Wire + Face + extrude)",
+                "Changing any property in the Properties panel triggers a clean recompute",
+                "The generated solid can be used with Pad or other Part Design features",
+                "A docstring in execute() explains the simplified involute formula used",
+                "No crashes or 'Shape is Null' errors when changing properties to reasonable values"
+              ],
+              hints: [
+                "Look at the FreeCAD Gear workbench source for involute math reference (github.com/looooo/freecad.gears)",
+                "A simplified involute: for each tooth angle, compute x = r_base * (cos(t) + t*sin(t)), y = r_base * (sin(t) - t*cos(t))",
+                "Use Part.makePolygon on a list of FreeCAD.Vectors to build the gear perimeter",
+                "Start with num_teeth=12, module=1 for testing"
+              ],
+              resources: [
+                { label: "FCGear Workbench (reference source) — GitHub", url: "https://github.com/looooo/freecad.gears" }
+              ]
+            },
+            {
+              id: "ec2",
+              type: "Capstone Challenge",
+              title: "Build and Publish a Custom Tool",
+              description: "Design and implement a genuinely useful FreeCAD tool that doesn't exist as a built-in feature. Package it, document it, and version-control it.",
+              requirements: [
+                "Complete, working macro OR workbench command (not just a proof of concept)",
+                "Handles at least one error case gracefully (try/except with a FreeCAD.Console.PrintError message)",
+                "README.md in the repo describing: what the tool does, how to install and use it, known limitations",
+                "At least 3 meaningful Git commits (not just 'initial commit', 'fix', 'done')",
+                "Tool works on FreeCAD 1.1+ without requiring additional dependencies",
+                "Suggested tools: batch STEP exporter, bolt-pattern generator, sheet metal unfold helper, or anything you need"
+              ],
+              hints: [
+                "Start with a working macro, test it, then promote it to a workbench command",
+                "Use FreeCADGui.ActiveDocument.ActiveView.addEventCallback for interactive picker tools",
+                "Your commit messages should follow: 'type(scope): description' — e.g. 'feat(exporter): add STEP export loop for all bodies'"
+              ],
+              resources: [
+                { label: "FreeCAD Macros Repository — GitHub", url: "https://github.com/FreeCAD/FreeCAD-macros" },
+                { label: "FreeCAD Console API — Wiki", url: "https://wiki.freecad.org/FreeCAD_Console_API" }
+              ]
+            }
+          ]
+        }
+      ]
+    };
+
+    /* =====================================================================
+       STATE
+    ===================================================================== */
+    const STATE = {
+      theme: "dark",
+      activeLevel: "all",
+      completedLessons: new Set(),
+      openedLessons: new Set(),
+      completedChallenges: new Set(),
+      checkedRequirements: {},   // { challengeId: Set<reqIndex> }
+      modalLessonId: null
+    };
+
+    /* =====================================================================
+       LOCALSTORAGE
+    ===================================================================== */
+    const LS_KEY = "freecad-lp-v1";
+
+    function loadState() {
+      try {
+        const raw = localStorage.getItem(LS_KEY);
+        if (!raw) return;
+        const data = JSON.parse(raw);
+        if (data.theme) STATE.theme = data.theme;
+        if (Array.isArray(data.completedLessons)) STATE.completedLessons = new Set(data.completedLessons);
+        if (Array.isArray(data.openedLessons)) STATE.openedLessons = new Set(data.openedLessons);
+        if (Array.isArray(data.completedChallenges)) STATE.completedChallenges = new Set(data.completedChallenges);
+        if (data.checkedRequirements && typeof data.checkedRequirements === "object") {
+          for (const [k, v] of Object.entries(data.checkedRequirements)) {
+            STATE.checkedRequirements[k] = new Set(Array.isArray(v) ? v : []);
+          }
+        }
+      } catch (e) { /* localStorage unavailable or corrupted — continue with defaults */ }
+    }
+
+    function saveState() {
+      try {
+        const checkedReqs = {};
+        for (const [k, v] of Object.entries(STATE.checkedRequirements)) {
+          checkedReqs[k] = [...v];
+        }
+        localStorage.setItem(LS_KEY, JSON.stringify({
+          theme: STATE.theme,
+          completedLessons: [...STATE.completedLessons],
+          openedLessons: [...STATE.openedLessons],
+          completedChallenges: [...STATE.completedChallenges],
+          checkedRequirements: checkedReqs
+        }));
+      } catch (e) { /* ignore */ }
+    }
+
+    /* =====================================================================
+       THEME
+    ===================================================================== */
+    function applyTheme(theme) {
+      STATE.theme = theme;
+      document.documentElement.setAttribute("data-theme", theme);
+      const btn = document.getElementById("themeToggle");
+      if (btn) btn.textContent = theme === "dark" ? "☀" : "🌙";
+    }
+
+    /* =====================================================================
+       COMPUTED TOTALS
+    ===================================================================== */
+    function getTotals() {
+      let totalLessons = 0, totalChallenges = 0;
+      for (const level of DATA.levels) {
+        totalLessons += level.lessons.length;
+        totalChallenges += level.challenges.length;
+      }
+      return { totalLessons, totalChallenges };
+    }
+
+    function getAllLessons() {
+      return DATA.levels.flatMap(l => l.lessons);
+    }
+
+    function findLesson(id) {
+      return getAllLessons().find(l => l.id === id) || null;
+    }
+
+    function findAdjacentLesson(currentId) {
+      const all = getAllLessons();
+      const idx = all.findIndex(l => l.id === currentId);
+      if (idx === -1) return { prev: null, next: null };
+      return {
+        prev: idx > 0 ? all[idx - 1].id : null,
+        next: idx < all.length - 1 ? all[idx + 1].id : null
+      };
+    }
+
+    function getLevelForId(levelId) {
+      return DATA.levels.find(l => l.id === levelId) || null;
+    }
+
+    /* =====================================================================
+       PROGRESS BARS
+    ===================================================================== */
+    function renderProgressBars() {
+      const { totalLessons, totalChallenges } = getTotals();
+      const cl = STATE.completedLessons.size;
+      const cc = STATE.completedChallenges.size;
+
+      const lessonPct = totalLessons > 0 ? Math.round((cl / totalLessons) * 100) : 0;
+      const challengePct = totalChallenges > 0 ? Math.round((cc / totalChallenges) * 100) : 0;
+
+      document.getElementById("lessonProgressText").textContent = `${cl} / ${totalLessons}`;
+      document.getElementById("challengeProgressText").textContent = `${cc} / ${totalChallenges}`;
+      document.getElementById("lessonProgressBar").style.width = lessonPct + "%";
+      document.getElementById("challengeProgressBar").style.width = challengePct + "%";
+      document.getElementById("lessonProgressTrack").setAttribute("aria-valuenow", lessonPct);
+      document.getElementById("challengeProgressTrack").setAttribute("aria-valuenow", challengePct);
+
+      // Congrats banner
+      const existing = document.querySelector(".congrats-banner");
+      if (cl === totalLessons && totalLessons > 0) {
+        if (!existing) {
+          const banner = document.createElement("div");
+          banner.className = "congrats-banner";
+          banner.textContent = "🎉 Congratulations! You've completed all lessons! You're a FreeCAD expert!";
+          document.querySelector(".progress-dashboard").appendChild(banner);
+        }
+      } else {
+        if (existing) existing.remove();
+      }
+    }
+
+    /* =====================================================================
+       CARD BUILDERS
+    ===================================================================== */
+    function getStatus(id, type) {
+      if (type === "challenge") {
+        return STATE.completedChallenges.has(id) ? "complete" : "locked";
+      }
+      if (STATE.completedLessons.has(id)) return "complete";
+      if (STATE.openedLessons.has(id)) return "in-progress";
+      return "locked";
+    }
+
+    function statusIcon(status) {
+      if (status === "complete") return '<span class="card-status-icon" style="color:var(--status-complete)">✓</span>';
+      if (status === "in-progress") return '<span class="card-status-icon" style="color:var(--status-progress)">◐</span>';
+      return '<span class="card-status-icon" style="color:var(--text-muted)">○</span>';
+    }
+
+    function buildLessonCard(lesson) {
+      const status = getStatus(lesson.id, "lesson");
+      const resCount = lesson.resources.length;
+      const exCount = lesson.exercises.length;
+      return `
+        <div class="lesson-card" data-lesson-id="${lesson.id}" data-status="${status}" role="button" tabindex="0" aria-label="Open lesson: ${escHtml(lesson.title)}">
+          <div class="card-top">
+            <span class="card-num">Lesson ${lesson.num}</span>
+            ${statusIcon(status)}
+          </div>
+          <div class="card-title">${escHtml(lesson.title)}</div>
+          <div class="card-desc">${escHtml(lesson.description)}</div>
+          <div class="card-meta">
+            <span class="card-badge">📚 ${resCount} resource${resCount !== 1 ? "s" : ""}</span>
+            <span class="card-badge">✏ ${exCount} exercise${exCount !== 1 ? "s" : ""}</span>
+          </div>
+        </div>
+      `.trim();
+    }
+
+    function buildChallengeCard(challenge, levelId) {
+      const status = getStatus(challenge.id, "challenge");
+      const isComplete = status === "complete";
+      const checked = STATE.checkedRequirements[challenge.id] || new Set();
+
+      const reqsHtml = challenge.requirements.map((req, i) => {
+        const isChecked = checked.has(i);
+        return `
+          <div class="challenge-req-item" data-challenge-req="${challenge.id}" data-req-index="${i}">
+            <div class="req-checkbox${isChecked ? " checked" : ""}">${isChecked ? "✓" : ""}</div>
+            <span>${escHtml(req)}</span>
+          </div>
+        `.trim();
+      }).join("");
+
+      const hintsHtml = challenge.hints.map(h => `<li>${escHtml(h)}</li>`).join("");
+      const resourcesHtml = challenge.resources.map(r =>
+        `<a href="${safeHref(r.url)}" target="_blank" rel="noopener noreferrer" class="resource-link">🔗 ${escHtml(r.label)}</a>`
+      ).join(" ");
+
+      return `
+        <div class="challenge-card challenge-card--${levelId}" data-challenge-id="${challenge.id}">
+          <div class="challenge-card-header">
+            <span class="challenge-icon">🏆</span>
+            <div>
+              <div class="challenge-type-label">${escHtml(challenge.type)}</div>
+              <div class="challenge-title">${escHtml(challenge.title)}</div>
+            </div>
+          </div>
+          <p class="challenge-desc">${escHtml(challenge.description)}</p>
+          <div class="challenge-requirements">
+            <strong style="font-size:0.8rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.06em;">Requirements</strong>
+            ${reqsHtml}
+          </div>
+          ${challenge.hints.length > 0 ? `
+          <details style="font-size:0.875rem;color:var(--text-secondary);">
+            <summary style="cursor:pointer;font-weight:600;color:var(--text-muted);font-size:0.8rem;text-transform:uppercase;letter-spacing:0.06em;list-style:none;padding:4px 0;" tabindex="0">▶ Hints (${challenge.hints.length})</summary>
+            <ul style="margin-top:8px;padding-left:1.25rem;display:flex;flex-direction:column;gap:6px;">${hintsHtml}</ul>
+          </details>` : ""}
+          ${resourcesHtml ? `<div style="display:flex;flex-direction:column;gap:8px;">${resourcesHtml}</div>` : ""}
+          <div class="challenge-card-footer">
+            <span class="challenge-status${isComplete ? " done" : ""}">
+              ${isComplete ? "✓ Completed" : `${checked.size} / ${challenge.requirements.length} requirements checked`}
+            </span>
+            <button class="btn-challenge-complete${isComplete ? " completed" : ""}"
+              data-complete-challenge="${challenge.id}"
+              ${isComplete ? "disabled" : ""}>
+              ${isComplete ? "✓ Completed" : "Mark Complete"}
+            </button>
+          </div>
+        </div>
+      `.trim();
+    }
+
+    /* =====================================================================
+       RENDER LEARNING PATH
+    ===================================================================== */
+    function renderLearningPath() {
+      const container = document.getElementById("learningPath");
+      const active = STATE.activeLevel;
+
+      const levelsToShow = active === "all"
+        ? DATA.levels
+        : DATA.levels.filter(l => l.id === active);
+
+      if (levelsToShow.length === 0) {
+        container.innerHTML = `<div class="empty-state">No lessons found for this level.</div>`;
+        return;
+      }
+
+      const sectionsHtml = levelsToShow.map(level => {
+        const lessonsHtml = level.lessons.map(buildLessonCard).join("");
+        const challengesHtml = level.challenges.map(c => buildChallengeCard(c, level.id)).join("");
+
+        return `
+          <section class="level-section" data-level="${level.id}">
+            <div class="level-header">
+              <span class="level-pill level-pill--${level.id}">${escHtml(level.title)}</span>
+              <h2 class="level-title">${escHtml(level.subtitle)}</h2>
+              <span class="level-subtitle">${level.lessons.length} lessons · ${level.challenges.length} challenges</span>
+            </div>
+            <div class="lessons-grid">${lessonsHtml}</div>
+            <div class="challenge-cards">${challengesHtml}</div>
+          </section>
+        `.trim();
+      }).join("");
+
+      container.innerHTML = sectionsHtml;
+    }
+
+    function renderAll() {
+      renderLearningPath();
+      renderProgressBars();
+    }
+
+    /* =====================================================================
+       MODAL
+    ===================================================================== */
+    function openModal(lessonId) {
+      const lesson = findLesson(lessonId);
+      if (!lesson) return;
+
+      // Mark as opened (in-progress) if not already complete
+      if (!STATE.completedLessons.has(lessonId)) {
+        STATE.openedLessons.add(lessonId);
+        saveState();
+      }
+
+      STATE.modalLessonId = lessonId;
+
+      const level = getLevelForId(lesson.levelId);
+      const { prev, next } = findAdjacentLesson(lessonId);
+      const isComplete = STATE.completedLessons.has(lessonId);
+
+      // Populate modal
+      const pill = document.getElementById("modalLevelPill");
+      pill.textContent = level ? level.title : lesson.levelId;
+      pill.className = `modal-level-pill level-pill--${lesson.levelId}`;
+
+      document.getElementById("modalLessonNum").textContent = `Lesson ${lesson.num} of ${getAllLessons().length}`;
+      document.getElementById("modalTitle").textContent = lesson.title;
+      document.getElementById("modalDescription").textContent = lesson.description;
+
+      document.getElementById("modalObjectives").innerHTML = lesson.objectives
+        .map(o => `<li>${escHtml(o)}</li>`).join("");
+
+      document.getElementById("modalResources").innerHTML = lesson.resources
+        .map(r => `<li><a href="${safeHref(r.url)}" target="_blank" rel="noopener noreferrer" class="resource-link">🔗 ${escHtml(r.label)}</a></li>`)
+        .join("");
+
+      document.getElementById("modalExercises").innerHTML = lesson.exercises
+        .map(e => `<li>${escHtml(e)}</li>`).join("");
+
+      // Complete button
+      syncCompleteButton(lessonId);
+
+      // Nav buttons
+      document.getElementById("modalPrevBtn").disabled = !prev;
+      document.getElementById("modalNextBtn").disabled = !next;
+
+      // Show modal
+      const overlay = document.getElementById("modalOverlay");
+      overlay.removeAttribute("hidden");
+      document.body.classList.add("modal-open");
+
+      // Focus management
+      document.getElementById("modalClose").focus();
+
+      // Update card in background
+      updateCardStatus(lessonId);
+    }
+
+    function closeModal() {
+      const overlay = document.getElementById("modalOverlay");
+      overlay.setAttribute("hidden", "");
+      document.body.classList.remove("modal-open");
+      STATE.modalLessonId = null;
+    }
+
+    function updateCardStatus(lessonId) {
+      const card = document.querySelector(`[data-lesson-id="${lessonId}"]`);
+      if (!card) return;
+      const status = getStatus(lessonId, "lesson");
+      card.setAttribute("data-status", status);
+      const iconEl = card.querySelector(".card-status-icon");
+      if (iconEl) iconEl.outerHTML = statusIcon(status);
+    }
+
+    function syncCompleteButton(lessonId) {
+      const isComplete = STATE.completedLessons.has(lessonId);
+      const btn = document.getElementById("modalCompleteBtn");
+      btn.textContent = isComplete ? "✓ Completed (click to undo)" : "Mark as Complete";
+      btn.className = "btn-complete" + (isComplete ? " completed" : "");
+    }
+
+    /* =====================================================================
+       COMPLETE / UNCOMPLETE
+    ===================================================================== */
+    function toggleLessonComplete(lessonId) {
+      if (STATE.completedLessons.has(lessonId)) {
+        STATE.completedLessons.delete(lessonId);
+        STATE.openedLessons.add(lessonId);
+        showToast("Lesson marked incomplete.");
+      } else {
+        STATE.completedLessons.add(lessonId);
+        STATE.openedLessons.delete(lessonId);
+        showToast("Lesson complete! Keep going 🚀");
+      }
+      saveState();
+      renderProgressBars();
+      updateCardStatus(lessonId);
+
+      // Update modal button
+      syncCompleteButton(lessonId);
+    }
+
+    function completeChallenge(challengeId) {
+      if (STATE.completedChallenges.has(challengeId)) return;
+      STATE.completedChallenges.add(challengeId);
+      saveState();
+      renderProgressBars();
+      renderLearningPath();
+      showToast("Challenge complete! 🏆 Well done!");
+    }
+
+    function toggleRequirement(challengeId, reqIndex) {
+      if (!STATE.checkedRequirements[challengeId]) {
+        STATE.checkedRequirements[challengeId] = new Set();
+      }
+      const set = STATE.checkedRequirements[challengeId];
+      if (set.has(reqIndex)) {
+        set.delete(reqIndex);
+      } else {
+        set.add(reqIndex);
+      }
+      saveState();
+      renderLearningPath();
+    }
+
+    /* =====================================================================
+       TOAST
+    ===================================================================== */
+    let toastTimer = null;
+    function showToast(msg) {
+      const toast = document.getElementById("toast");
+      toast.textContent = msg;
+      toast.classList.add("toast--visible");
+      if (toastTimer) clearTimeout(toastTimer);
+      toastTimer = setTimeout(() => toast.classList.remove("toast--visible"), 3000);
+    }
+
+    /* =====================================================================
+       LEVEL FILTER
+    ===================================================================== */
+    function filterByLevel(levelId) {
+      STATE.activeLevel = levelId;
+      document.querySelectorAll(".level-btn").forEach(btn => {
+        btn.classList.toggle("active", btn.dataset.level === levelId);
+      });
+      if (!document.getElementById("modalOverlay").hasAttribute("hidden")) closeModal();
+      renderLearningPath();
+    }
+
+    /* =====================================================================
+       RESET
+    ===================================================================== */
+    function resetProgress() {
+      if (!confirm("Reset ALL progress? This cannot be undone.")) return;
+      STATE.completedLessons.clear();
+      STATE.openedLessons.clear();
+      STATE.completedChallenges.clear();
+      STATE.checkedRequirements = {};
+      saveState();
+      renderAll();
+      showToast("Progress reset.");
+    }
+
+    /* =====================================================================
+       UTILITY
+    ===================================================================== */
+    function escHtml(str) {
+      return String(str)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#39;");
+    }
+
+    function safeHref(url) {
+      const s = String(url).trim();
+      if (/^(javascript|data):/i.test(s)) return "#";
+      return escHtml(s);
+    }
+
+    /* =====================================================================
+       EVENT LISTENERS
+    ===================================================================== */
+    function attachStaticListeners() {
+      // Theme toggle
+      document.getElementById("themeToggle").addEventListener("click", () => {
+        applyTheme(STATE.theme === "dark" ? "light" : "dark");
+        saveState();
+      });
+
+      // Reset progress
+      document.getElementById("resetProgress").addEventListener("click", resetProgress);
+
+      // Level nav
+      document.querySelectorAll(".level-btn").forEach(btn => {
+        btn.addEventListener("click", () => filterByLevel(btn.dataset.level));
+      });
+
+      // Modal close button
+      document.getElementById("modalClose").addEventListener("click", closeModal);
+
+      // Modal overlay click (close if clicking backdrop)
+      document.getElementById("modalOverlay").addEventListener("click", (e) => {
+        if (e.target === document.getElementById("modalOverlay")) closeModal();
+      });
+
+      // Modal complete button
+      document.getElementById("modalCompleteBtn").addEventListener("click", () => {
+        if (STATE.modalLessonId) toggleLessonComplete(STATE.modalLessonId);
+      });
+
+      // Modal nav buttons
+      document.getElementById("modalPrevBtn").addEventListener("click", () => {
+        if (!STATE.modalLessonId) return;
+        const { prev } = findAdjacentLesson(STATE.modalLessonId);
+        if (prev) openModal(prev);
+      });
+
+      document.getElementById("modalNextBtn").addEventListener("click", () => {
+        if (!STATE.modalLessonId) return;
+        const { next } = findAdjacentLesson(STATE.modalLessonId);
+        if (next) openModal(next);
+      });
+
+      // Keyboard shortcuts + focus trap
+      document.addEventListener("keydown", (e) => {
+        const overlay = document.getElementById("modalOverlay");
+        const modalOpen = !overlay.hasAttribute("hidden");
+
+        if (e.key === "Escape" && modalOpen) {
+          closeModal();
+          return;
+        }
+        if (modalOpen && e.key === "ArrowLeft" && STATE.modalLessonId) {
+          const { prev } = findAdjacentLesson(STATE.modalLessonId);
+          if (prev) openModal(prev);
+          return;
+        }
+        if (modalOpen && e.key === "ArrowRight" && STATE.modalLessonId) {
+          const { next } = findAdjacentLesson(STATE.modalLessonId);
+          if (next) openModal(next);
+          return;
+        }
+        if (modalOpen && e.key === "Tab") {
+          const modal = document.getElementById("modal");
+          const focusable = Array.from(modal.querySelectorAll(
+            'a[href], button:not([disabled]), [tabindex]:not([tabindex="-1"])'
+          ));
+          if (focusable.length === 0) return;
+          const first = focusable[0];
+          const last = focusable[focusable.length - 1];
+          if (e.shiftKey) {
+            if (document.activeElement === first) { e.preventDefault(); last.focus(); }
+          } else {
+            if (document.activeElement === last) { e.preventDefault(); first.focus(); }
+          }
+        }
+      });
+
+      // Event delegation for learning path
+      document.getElementById("learningPath").addEventListener("click", (e) => {
+        // Lesson card click
+        const card = e.target.closest("[data-lesson-id]");
+        if (card) {
+          openModal(card.dataset.lessonId);
+          return;
+        }
+
+        // Challenge complete button
+        const completeBtn = e.target.closest("[data-complete-challenge]");
+        if (completeBtn && !completeBtn.disabled) {
+          completeChallenge(completeBtn.dataset.completeChallenge);
+          return;
+        }
+
+        // Requirement checkbox toggle
+        const reqItem = e.target.closest("[data-challenge-req]");
+        if (reqItem) {
+          const challengeId = reqItem.dataset.challengeReq;
+          const reqIndex = parseInt(reqItem.dataset.reqIndex, 10);
+          toggleRequirement(challengeId, reqIndex);
+          return;
+        }
+      });
+
+      // Keyboard support for lesson cards
+      document.getElementById("learningPath").addEventListener("keydown", (e) => {
+        if (e.key === "Enter" || e.key === " ") {
+          const card = e.target.closest("[data-lesson-id]");
+          if (card) {
+            e.preventDefault();
+            openModal(card.dataset.lessonId);
+          }
+        }
+      });
+    }
+
+    /* =====================================================================
+       INIT
+    ===================================================================== */
+    document.addEventListener("DOMContentLoaded", () => {
+      loadState();
+      applyTheme(STATE.theme);
+      renderAll();
+      attachStaticListeners();
+    });
+  </script>
+</body>
+</html>
